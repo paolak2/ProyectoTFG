@@ -1,0 +1,6 @@
+@use "../base/variables" as *;
+@use "sass:color";
+
+@function changeColor($Color, $amount) {
+  @return color.scale($color: $Color, $lightness: $amount);
+}

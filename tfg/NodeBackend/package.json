@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "scripts": {
+    "start": "node mockApi/server.js",
+    "dev": "node mockApi/server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

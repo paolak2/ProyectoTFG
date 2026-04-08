@@ -1,0 +1,48 @@
+@use "../base/variables" as *;
+
+.bodyGarage {
+  background-color: $secondary-color-gris;
+  .garage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $padding_lg;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $gap_lg;
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      p {
+        color: $text-color;
+      }
+
+      button {
+        background: $primary-color;
+        color: white;
+        padding: $padding_md $padding_lg;
+        border-radius: $border-radius;
+        border: none;
+        cursor: pointer;
+      }
+    }
+
+    &__stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: $gap_lg;
+      margin-bottom: $gap_lg;
+    }
+
+    &__vehicles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: $gap_lg;
+    }
+  }
+}

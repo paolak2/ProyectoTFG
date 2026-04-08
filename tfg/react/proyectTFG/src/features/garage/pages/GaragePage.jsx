@@ -1,0 +1,83 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import Navbar from "../components/navBar";
+import StatsCard from "../components/StatsCard";
+import VehicleCard from "../components/VehicleCard";
+import ModalForm from "../components/modalForm";
+import { API_VEHICLES_URL } from "../../../constantes/constantes";
+
+async function fetchVehicles() {
+  const res = await fetch(API_VEHICLES_URL);
+  if (!res.ok) {
+    throw new Error("Error al obtener vehículos");
+  }
+  return res.json();
+}
+
+function GaragePage() {
+  const [pageSelected, setPageSelected] = useState("garage");
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const {
+    data: vehicles = [],
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: fetchVehicles,
+  });
+
+  console.log(vehicles);
+
+  function abrirModal() {
+    console.log("Abrir modal para añadir vehículo");
+    setMostrarModal(true);
+    // Aquí iría la lógica para mostrar el modal de añadir vehículo
+  }
+  function cerrarModal() {
+    console.log("Cerrar modal de añadir vehículo");
+    setMostrarModal(false);
+    // Aquí iría la lógica para cerrar el modal de añadir vehículo
+  }
+  return (
+    <>
+      <Navbar pageSelected={pageSelected} setPageSelected={setPageSelected} />
+      <div className="bodyGarage">
+        <div className="garage">
+          <div className="garage__header">
+            <div>
+              <h1>Mi Garaje Virtual</h1>
+              <p>Gestiona tus vehículos y su estado</p>
+            </div>
+
+            <button
+              onClick={() =>
+                mostrarModal === false ? abrirModal() : cerrarModal()
+              }
+            >
+              + Añadir Vehículo
+            </button>
+          </div>
+          {mostrarModal && <ModalForm onClose={cerrarModal} userId={1} />}
+
+          <div className="garage__stats">
+            <StatsCard type="total" value={3} />
+            <StatsCard type="disponible" value={2} />
+            <StatsCard type="taller" value={1} />
+          </div>
+
+          <div className="garage__vehicles">
+            {isPending && <p>Cargando vehículos...</p>}
+            {isError && <p>{error.message}</p>}
+            {vehicles.map((vehicle) => (
+              <VehicleCard vehicle={vehicle} key={vehicle.id} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default GaragePage;

@@ -1,0 +1,124 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+@use "sass:map";
+
+article {
+  background-color: $secondary-color-claro;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: $padding_lg;
+  display: flex;
+  flex-direction: column;
+  /*justify-content: space-around;*/
+
+  .vehicle-header {
+    display: flex;
+    align-items: center;
+    gap: $padding_md;
+    position: relative;
+
+    .vehicle-image {
+      background-color: $primary-color;
+      width: 5rem;
+      height: 5rem;
+      border-radius: $border-radius;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 80%;
+        height: 80%;
+        object-fit: cover;
+      }
+      i {
+        font-size: 1.5rem;
+        color: $text-color-white;
+      }
+    }
+    .vehicle-model {
+      h4 {
+        margin-bottom: $padding_sm;
+        font-size: clamp(12px, 1rem, 16px);
+        color: $text-color;
+      }
+      h5 {
+        color: $primary-color;
+      }
+      p {
+        font-size: clamp(10px, 0.8rem, 14px);
+        color: $text-color-gray;
+      }
+    }
+  }
+
+  .vehicle-details {
+    margin-top: $padding_sm;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-bottom: $border-bottom-line;
+    p {
+      display: flex;
+      flex-direction: column;
+      margin: $padding_sm 0;
+      color: $text-color-gray;
+
+      strong {
+        color: $text-color;
+      }
+    }
+  }
+
+  .vehicle-status {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8rem;
+    display: inline-flex;
+    gap: $padding_base;
+    padding: $padding_base $padding_sm;
+    border-radius: $border-radius-max;
+
+    &-disponible {
+      background-color: changeColor($success, 50%);
+      color: changeColor($success, -50%);
+      border: 1px solid changeColor($success, -30%);
+    }
+    &-en-taller {
+      background-color: changeColor($warning, 50%);
+      color: changeColor($warning, -50%);
+      border: 1px solid changeColor($warning, -50%);
+    }
+    &-pendiente-recogida {
+      background-color: changeColor($warning, 50%);
+      color: changeColor($warning, -50%);
+      border: 1px solid changeColor($warning, -50%);
+    }
+  }
+  .vehicle-footer {
+    margin-top: $padding_md;
+    display: grid;
+    gap: $padding_sm;
+
+    button {
+      padding: $padding_sm $padding_md;
+      border-radius: $border-radius;
+      border: none;
+      background-color: $primary-color;
+      color: $text-color-white;
+      cursor: pointer;
+      box-shadow: $shadow-buttons;
+
+      &:hover {
+        background-color: $primary-hover;
+        box-shadow: none;
+      }
+    }
+    .vehicle-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: $padding_sm;
+    }
+  }
+}

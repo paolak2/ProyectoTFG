@@ -1,0 +1,8 @@
+@use "./base/variables" as *;
+@use "./base/reset";
+@use "./components/navbar";
+@use "./components/statsCard";
+@use "./components/vehicleCard";
+@use "./components/repairStatus";
+@use "./components/modalForm";
+@use "./pages/garage";
