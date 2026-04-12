@@ -1,8 +1,14 @@
+import { useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 function Navbar({ pageSelected, setPageSelected }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   console.log("Navbar renderizado con pageSelected:", pageSelected);
   function handleNavClick(page) {
     setPageSelected(page);
-    
+    navigate("/");
   }
   return (
     <div className="navbar">
@@ -17,12 +23,9 @@ function Navbar({ pageSelected, setPageSelected }) {
           </div>
         </div>
         <nav>
-          <span
-            className={pageSelected === "garage" ? "selected" : ""}
-            onClick={() => handleNavClick("garage")}
-          >
-            Mi Garaje
-          </span>
+          <Link className={location.pathname === "/" ? "selected" : ""} to="/">
+            Garaje
+          </Link>
           <span
             className={pageSelected === "talleres" ? "selected" : ""}
             onClick={() => handleNavClick("talleres")}

@@ -5,6 +5,10 @@
 .navbar {
   background-color: $secondary-color-claro;
   border-bottom: $border-bottom-line;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   header {
     max-width: 1400px;
     margin: 0 auto;
@@ -46,14 +50,16 @@
       .selected {
         background-color: $primary-color;
       }
-
-      span {
+      a {
+        color: $text-color-white;
+      }
+      :link {
         background-color: changeColor($primary-color, 30%);
         padding: $padding_sm $padding_md;
         border-radius: $border-radius;
         font-size: 1rem;
-        color: $text-color-white;
         cursor: pointer;
+        text-decoration: none;
         transition: 0.2s ease-in-out;
         &:hover {
           background-color: $primary-color;

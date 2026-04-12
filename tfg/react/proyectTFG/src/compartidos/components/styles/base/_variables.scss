@@ -1,14 +1,15 @@
 @use "sass:color";
 
 $primary-color: #2563eb;
+$primary-color-medio: #0244af;
 $primary-color-oscuro: #022c6f;
 
 $secondary-color-claro: #fafafa;
 $secondary-color-gris: #ecf1f5;
 $background-degradado: linear-gradient(
   150deg,
-  $primary-color 50%,
-  $primary-color-oscuro 100%
+  $primary-color-medio 10%,
+  $primary-color 100%
 );
 
 $text-color: #40557f;

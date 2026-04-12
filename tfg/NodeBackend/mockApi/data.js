@@ -73,6 +73,46 @@ export const vehicles = [
       estimatedFinish: "2024-03-25",
       servicio: "Cambio de aceite y revisión general",
     },
+    facturas: {
+      totalGlobalAnyo: 640,
+      historial: [
+        {
+          name: "Cambio Aceite",
+          total: 120,
+          date: "2024-03-15",
+        },
+        {
+          name: "Revisión Técnica",
+          total: 200,
+          date: "2025-03-15",
+        },
+        {
+          name: "Cambio Pastillas de freno",
+          total: 120,
+          date: "2024-03-15",
+        },
+        {
+          name: "Cambios llantas",
+          total: 200,
+          date: "2025-03-15",
+        },
+      ],
+    },
+    gastoGasolina: {
+      totalUltimoMes: 100,
+      historial: [
+        {
+          litros: 50,
+          monto: 70,
+          date: "2025-03-15",
+        },
+        {
+          litros: 20,
+          monto: 30,
+          date: "2025-03-15",
+        },
+      ],
+    },
   },
   {
     id: 2,
@@ -88,5 +128,64 @@ export const vehicles = [
     mileage: 20000,
     ruta: null,
     taller: null,
+    facturas: {
+      totalGlobalAnyo: 640,
+      historial: [
+        {
+          name: "Cambio Aceite",
+          total: 120,
+          date: "2024-03-15",
+        },
+      ],
+    },
+    gastoGasolina: {
+      totalUltimoMes: 100,
+      historial: [
+        {
+          litros: 50,
+          monto: 70,
+          date: "2025-03-15",
+        },
+        {
+          litros: 20,
+          monto: 30,
+          date: "2025-03-15",
+        },
+      ],
+    },
+  },
+  {
+    id: 3,
+    userId: 1,
+    brandId: 2, //BMW
+    modelId: 3, // Serie 1
+    insuranceId: 2,
+    insuranceNumber: "ALL123456789",
+    plate: "2896ABC",
+    year: 2022,
+    color: "Blanco",
+    status: "Disponible",
+    mileage: 20000,
+    ruta: null,
+    taller: null,
+    facturas: null,
+    gastoGasolina: null,
+  },
+  {
+    id: 4,
+    userId: 1,
+    brandId: 2, //BMW
+    modelId: 3, // Serie 1
+    insuranceId: 2,
+    insuranceNumber: "ALL123456789",
+    plate: "9999ABC",
+    year: 2022,
+    color: "Blanco",
+    status: "Disponible",
+    mileage: 20000,
+    ruta: null,
+    taller: null,
+    facturas: null,
+    gastoGasolina: null,
   },
 ];

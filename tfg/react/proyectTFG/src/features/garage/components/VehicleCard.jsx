@@ -1,6 +1,10 @@
 import RepairStatus from "./RepairStatus";
+import { useNavigate } from "react-router-dom";
 
 function VehicleCard({ vehicle }) {
+  const navigate = useNavigate();
+  const rutaDetalles = `/vehicle/${vehicle.userId}/${vehicle.id}`;
+
   return (
     <article>
       <div className="vehicle-header">
@@ -50,9 +54,9 @@ function VehicleCard({ vehicle }) {
         />
       )}
       <div className="vehicle-footer">
-        {vehicle.estado === "En Taller" && <button>Contactar Taller</button>}
+        {vehicle.status === "En Taller" && <button>Contactar Taller</button>}
         <div className="vehicle-buttons">
-          <button>Ver Detalles</button>
+          <button onClick={() => navigate(rutaDetalles)}>Ver Detalles</button>
           <button>Añadir Gasto</button>
         </div>
       </div>
