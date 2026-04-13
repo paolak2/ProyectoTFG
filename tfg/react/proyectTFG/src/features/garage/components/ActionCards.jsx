@@ -27,7 +27,7 @@ function ActionCards({
   const finalTitle = title ?? preset?.title ?? "";
   const finalIcon = icon ?? preset?.icon ?? "";
   const finalDetails = details ?? preset?.details ?? "";
-  const finalClass = className ?? preset?.className ?? "";
+  const finalClass = className || preset?.className || "";
 
   return (
     <article className={`${finalClass}`}>
@@ -41,7 +41,7 @@ function ActionCards({
           ${total}
         </span>
       )}
-      <i className={`${finalIcon}`}></i>
+      {finalIcon && <i className={finalIcon}></i>}
       <h2>{`${finalTitle}`}</h2>
       <p>{`${finalDetails}`}</p>
       {finalClass === "historial" && date && (
