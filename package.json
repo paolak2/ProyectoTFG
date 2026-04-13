@@ -1,0 +1,9 @@
+{
+  "name": "proyectotfg-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix tfg/NodeBackend run dev & npm --prefix tfg/react/proyectTFG run dev",
+    "dev:back": "npm --prefix tfg/NodeBackend run dev",
+    "dev:front": "npm --prefix tfg/react/proyectTFG run dev"
+  }
+}
