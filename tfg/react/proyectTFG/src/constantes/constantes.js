@@ -4,3 +4,4 @@ export const API_VEHICLE_URL = API_URL + "vehicle";
 export const API_BRANDS_URL = API_URL + "brands";
 export const API_MODELS_URL = API_URL + "models";
 export const API_INSURANCES_URL = API_URL + "insurances";
+export const API_SERVICES_URL = API_URL + "services";

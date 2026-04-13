@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { API_VEHICLE_URL } from "../../../constantes/constantes";
 import Navbar from "../components/navBar";
 import StatsCard from "../components/StatsCard";
@@ -8,41 +8,14 @@ import AddModal from "../components/AddModal";
 import ActionCards from "../components/ActionCards";
 
 function VehicleDetailPage() {
-  const queryClient = useQueryClient();
-  const { id, userId } = useParams();
+  const { id: vehicleId, userId } = useParams();
   const [pageSelected, setPageSelected] = useState("garage-detail");
 
-  const [isFacturaModalOpen, setIsFacturaModalOpen] = useState(false);
-  const [isGasolinaModalOpen, setIsGasolinaModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null);
 
-  function openFacturaModal() {
-    console.log("abriendo modal...");
-    setIsFacturaModalOpen(true);
-  }
-  const closeFacturaModal = () => setIsFacturaModalOpen(false);
-
-  const openGasolinaModal = () => setIsGasolinaModalOpen(true);
-  const closeGasolinaModal = () => setIsGasolinaModalOpen(false);
-
-  const AddFactura = async (data) => {
-    await fetch(`${API_VEHICLE_URL}/${userId}/${id}/gasoil`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-
-    queryClient.invalidateQueries(["vehicle", userId, id]);
-    closeFacturaModal();
-  };
-
-  const AddGasolina = async (data) => {
-    await fetch(`${API_VEHICLE_URL}/${userId}/${id}/gasoil`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-
-    queryClient.invalidateQueries(["vehicle", userId, id]);
-    closeFacturaModal();
-  };
+  const openFacturaModal = () => setModalType("factura");
+  const openGasolinaModal = () => setModalType("gasoil");
+  const closeModal = () => setModalType(null);
 
   const {
     data: vehicle,
@@ -50,15 +23,17 @@ function VehicleDetailPage() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["vehicle", userId, id],
+    queryKey: ["vehicle", userId, vehicleId],
     queryFn: async () => {
-      const res = await fetch(`${API_VEHICLE_URL}/${userId}/${id}`);
+      const res = await fetch(`${API_VEHICLE_URL}/${userId}/${vehicleId}`);
       if (!res.ok) {
         throw new Error("Error al obtener el vehículo");
       }
+
       return res.json();
     },
   });
+
   if (isPending) return <p>Cargando...</p>;
   if (isError) return <p>Error: {error?.message}</p>;
 
@@ -240,30 +215,16 @@ function VehicleDetailPage() {
                 />
               )}
             </div>
-            {isFacturaModalOpen && (
-              <AddModal
-                type="factura"
-                onClose={closeFacturaModal}
-                onSubmit={AddFactura}
-              />
-            )}
 
-            {isGasolinaModalOpen && (
-              <AddModal
-                type="gasolina"
-                onClose={closeGasolinaModal}
-                onSubmit={AddGasolina}
-              />
-            )}
             <div className="details-historial-gasolina">
               <h3>Historial Gasto Gasoil</h3>
-              {vehicle.facturas?.historial?.length > 0 ? (
-                vehicle.gastoGasolina?.historial?.map((item, index) => (
+              {vehicle.gastoGasolina?.historial?.length > 0 ? (
+                vehicle.gastoGasolina.historial.map((item, index) => (
                   <ActionCards
                     key={index}
                     className="historial"
                     type="historial"
-                    title={`${item.litros}L`}
+                    title={item.litros ? `${item.litros}L` : "Sin litros"}
                     total={item.monto}
                     date={item.date}
                   />
@@ -279,6 +240,14 @@ function VehicleDetailPage() {
           </div>
         </section>
       </div>
+      {modalType && (
+        <AddModal
+          type={modalType}
+          userId={userId}
+          vehicleId={vehicleId}
+          onClose={closeModal}
+        />
+      )}
     </>
   );
 }

@@ -5,6 +5,7 @@ import Navbar from "../components/navBar";
 import StatsCard from "../components/StatsCard";
 import VehicleCard from "../components/VehicleCard";
 import ModalForm from "../components/modalForm";
+import AddModal from "../components/AddModal";
 import { API_VEHICLES_URL } from "../../../constantes/constantes";
 
 async function fetchVehicles() {
@@ -27,7 +28,22 @@ function GaragePage() {
     queryKey: ["vehicles"],
     queryFn: fetchVehicles,
   });
+  const [modalType, setModalType] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const openFacturaModal = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setModalType("factura");
+  };
 
+  const openGasolinaModal = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setModalType("gasoil");
+  };
+
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedVehicle(null);
+  };
   console.log(vehicles);
 
   function abrirModal() {
@@ -71,11 +87,24 @@ function GaragePage() {
             {isPending && <p>Cargando vehículos...</p>}
             {isError && <p>{error.message}</p>}
             {vehicles.map((vehicle) => (
-              <VehicleCard vehicle={vehicle} key={vehicle.id} />
+              <VehicleCard
+                vehicle={vehicle}
+                key={vehicle.id}
+                onClickFactura={() => openFacturaModal(vehicle)}
+                onClickGasolina={() => openGasolinaModal(vehicle)}
+              />
             ))}
           </div>
         </div>
       </div>
+      {modalType && selectedVehicle && (
+        <AddModal
+          type={modalType}
+          userId={selectedVehicle.userId}
+          vehicleId={selectedVehicle.id}
+          onClose={closeModal}
+        />
+      )}
     </>
   );
 }

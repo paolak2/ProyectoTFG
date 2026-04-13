@@ -53,6 +53,15 @@ export const insurances = [
   { id: 10, name: "Helvetia" },
 ];
 
+export const services = [
+  { id: 1, name: "revision" },
+  { id: 2, name: "aceite" },
+  { id: 3, name: "frenos" },
+  { id: 4, name: "neumaticos" },
+  { id: 5, name: "bateria" },
+  { id: 6, name: "averia" },
+];
+
 export const vehicles = [
   {
     id: 1,
@@ -129,29 +138,12 @@ export const vehicles = [
     ruta: null,
     taller: null,
     facturas: {
-      totalGlobalAnyo: 640,
-      historial: [
-        {
-          name: "Cambio Aceite",
-          total: 120,
-          date: "2024-03-15",
-        },
-      ],
+      totalGlobalAnyo: 0,
+      historial: [],
     },
     gastoGasolina: {
-      totalUltimoMes: 100,
-      historial: [
-        {
-          litros: 50,
-          monto: 70,
-          date: "2025-03-15",
-        },
-        {
-          litros: 20,
-          monto: 30,
-          date: "2025-03-15",
-        },
-      ],
+      totalUltimoMes: 0,
+      historial: [],
     },
   },
   {
@@ -168,24 +160,36 @@ export const vehicles = [
     mileage: 20000,
     ruta: null,
     taller: null,
-    facturas: null,
-    gastoGasolina: null,
+    facturas: {
+      totalGlobalAnyo: 0,
+      historial: [],
+    },
+    gastoGasolina: {
+      totalUltimoMes: 0,
+      historial: [],
+    },
   },
   {
     id: 4,
     userId: 1,
-    brandId: 2, //BMW
-    modelId: 3, // Serie 1
-    insuranceId: 2,
-    insuranceNumber: "ALL123456789",
-    plate: "9999ABC",
-    year: 2022,
-    color: "Blanco",
+    brandId: 2,
+    modelId: 4,
+    insuranceId: 1,
+    insuranceNumber: "MAP123",
+    plate: "1234ABC",
+    year: 2020,
+    color: "Negro",
     status: "Disponible",
-    mileage: 20000,
+    mileage: 50000,
     ruta: null,
     taller: null,
-    facturas: null,
-    gastoGasolina: null,
+    facturas: {
+      totalGlobalAnyo: 0,
+      historial: [],
+    },
+    gastoGasolina: {
+      totalUltimoMes: 0,
+      historial: [],
+    },
   },
 ];
