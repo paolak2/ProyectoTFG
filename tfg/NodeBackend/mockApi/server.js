@@ -105,6 +105,77 @@ app.post("/api/vehicles", (req, res) => {
   res.status(201).json(newVehicle);
 });
 
+app.put("/api/vehicle/:userId/:id", (req, res) => {
+  const { userId, id } = req.params;
+  const vehicleIndex = vehicles.findIndex(
+    (v) => v.id == id && v.userId == userId,
+  );
+
+  if (vehicleIndex === -1) {
+    return res.status(404).json({ message: "Vehículo no encontrado" });
+  }
+
+  const {
+    brandId,
+    modelId,
+    insuranceId,
+    insuranceNumber,
+    plate,
+    year,
+    color,
+    mileage,
+  } = req.body;
+
+  if (!brandId || !modelId || !plate) {
+    return res.status(400).json({
+      error: "Faltan campos obligatorios",
+    });
+  }
+
+  const brandExists = brands.some((b) => b.id === Number(brandId));
+  const modelExists = models.some((m) => m.id === Number(modelId));
+  const insuranceExists = insuranceId
+    ? insurances.some((i) => i.id === Number(insuranceId))
+    : true;
+
+  if (!brandExists || !modelExists) {
+    return res.status(400).json({
+      error: "Marca o modelo inválido",
+    });
+  }
+
+  if (!insuranceExists) {
+    return res.status(400).json({
+      error: "Aseguradora inválida",
+    });
+  }
+
+  const updatedVehicle = {
+    ...vehicles[vehicleIndex],
+    brandId: Number(brandId),
+    modelId: Number(modelId),
+    insuranceId: insuranceId ? Number(insuranceId) : null,
+    insuranceNumber: insuranceNumber ? String(insuranceNumber) : null,
+    plate: String(plate).toUpperCase(),
+    year,
+    color,
+    mileage: mileage !== undefined && mileage !== null ? Number(mileage) : null,
+  };
+
+  vehicles[vehicleIndex] = updatedVehicle;
+
+  const brand = brands.find((b) => b.id === updatedVehicle.brandId);
+  const model = models.find((m) => m.id === updatedVehicle.modelId);
+  const insurance = insurances.find((i) => i.id === updatedVehicle.insuranceId);
+
+  res.json({
+    ...updatedVehicle,
+    brandName: brand?.name || "",
+    modelName: model?.name || "",
+    insuranceName: insurance?.name || "",
+  });
+});
+
 /* =========================
    POST FACTURAS
 ========================= */

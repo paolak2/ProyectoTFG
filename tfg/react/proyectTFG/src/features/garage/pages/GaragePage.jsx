@@ -19,6 +19,7 @@ async function fetchVehicles() {
 function GaragePage() {
   const [pageSelected, setPageSelected] = useState("garage");
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [vehicleToEdit, setVehicleToEdit] = useState(null);
   const {
     data: vehicles = [],
     isPending,
@@ -47,14 +48,16 @@ function GaragePage() {
   console.log(vehicles);
 
   function abrirModal() {
-    console.log("Abrir modal para añadir vehículo");
+    setVehicleToEdit(null);
     setMostrarModal(true);
-    // Aquí iría la lógica para mostrar el modal de añadir vehículo
+  }
+  function abrirModalEditar(vehicle) {
+    setVehicleToEdit(vehicle);
+    setMostrarModal(true);
   }
   function cerrarModal() {
-    console.log("Cerrar modal de añadir vehículo");
     setMostrarModal(false);
-    // Aquí iría la lógica para cerrar el modal de añadir vehículo
+    setVehicleToEdit(null);
   }
   return (
     <>
@@ -75,7 +78,13 @@ function GaragePage() {
               + Añadir Vehículo
             </button>
           </div>
-          {mostrarModal && <ModalForm onClose={cerrarModal} userId={1} />}
+          {mostrarModal && (
+            <ModalForm
+              onClose={cerrarModal}
+              userId={1}
+              vehicleToEdit={vehicleToEdit}
+            />
+          )}
 
           <div className="garage__stats">
             <StatsCard type="total" value={3} />
@@ -92,6 +101,7 @@ function GaragePage() {
                 key={vehicle.id}
                 onClickFactura={() => openFacturaModal(vehicle)}
                 onClickGasolina={() => openGasolinaModal(vehicle)}
+                onClickEditar={() => abrirModalEditar(vehicle)}
               />
             ))}
           </div>

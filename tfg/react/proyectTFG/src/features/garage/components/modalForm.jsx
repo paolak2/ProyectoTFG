@@ -4,9 +4,10 @@ import {
   API_MODELS_URL,
   API_INSURANCES_URL,
   API_VEHICLES_URL,
+  API_VEHICLE_URL,
 } from "../../../constantes/constantes";
 import { colores } from "../../../constantes/colores";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 async function fetchMarcas() {
@@ -25,25 +26,60 @@ async function fetchAseguradoras() {
   return res.json();
 }
 
-function ModalForm({ onClose, userId }) {
+function ModalForm({ onClose, userId, vehicleToEdit = null }) {
   const queryClient = useQueryClient();
   const currentYear = new Date().getFullYear();
+  const isEditMode = Boolean(vehicleToEdit);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const handleBlur = (name) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
   };
-  const [formData, setFormData] = useState({
-    matricula: "",
-    marca: null,
-    modelo: null,
-    color: null,
-    year: null,
-    kms: "",
-    aseguradora: null,
-    numPoliza: "",
-    imagen: null,
-  });
+  const initialFormData = useMemo(
+    () => ({
+      matricula: vehicleToEdit?.plate || "",
+      marca: vehicleToEdit
+        ? {
+            value: vehicleToEdit.brandId,
+            label: vehicleToEdit.brandName,
+          }
+        : null,
+      modelo: vehicleToEdit
+        ? {
+            value: vehicleToEdit.modelId,
+            label: vehicleToEdit.modelName,
+          }
+        : null,
+      color: vehicleToEdit
+        ? {
+            value: vehicleToEdit.color,
+            label: vehicleToEdit.color,
+            color: vehicleToEdit.color,
+          }
+        : null,
+      year: vehicleToEdit
+        ? {
+            value: vehicleToEdit.year,
+            label: vehicleToEdit.year,
+          }
+        : null,
+      kms:
+        vehicleToEdit?.mileage !== undefined && vehicleToEdit?.mileage !== null
+          ? String(vehicleToEdit.mileage)
+          : "",
+      aseguradora:
+        vehicleToEdit?.insuranceId && vehicleToEdit?.insuranceName
+          ? {
+              value: vehicleToEdit.insuranceId,
+              label: vehicleToEdit.insuranceName,
+            }
+          : null,
+      numPoliza: vehicleToEdit?.insuranceNumber || "",
+      imagen: null,
+    }),
+    [vehicleToEdit],
+  );
+  const [formData, setFormData] = useState(initialFormData);
 
   const validacion = (name, value) => {
     switch (name) {
@@ -234,9 +270,14 @@ function ModalForm({ onClose, userId }) {
       insuranceNumber: formData.numPoliza,
     };
   };
-  const createVehicle = async (data) => {
-    const res = await fetch(API_VEHICLES_URL, {
-      method: "POST",
+  const upsertVehicle = async (data) => {
+    const endpoint =
+      isEditMode && vehicleToEdit
+        ? `${API_VEHICLE_URL}/${userId}/${vehicleToEdit.id}`
+        : API_VEHICLES_URL;
+
+    const res = await fetch(endpoint, {
+      method: isEditMode ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -256,9 +297,14 @@ function ModalForm({ onClose, userId }) {
     return responseData;
   };
   const mutation = useMutation({
-    mutationFn: createVehicle,
+    mutationFn: upsertVehicle,
     onSuccess: () => {
-      queryClient.invalidateQueries(["vehiculos"]); // refresca lista
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      if (isEditMode && vehicleToEdit) {
+        queryClient.invalidateQueries({
+          queryKey: ["vehicle", String(userId), String(vehicleToEdit.id)],
+        });
+      }
       onClose(); // cerrar modal
     },
     onError: (error) => {
@@ -271,7 +317,7 @@ function ModalForm({ onClose, userId }) {
         <button className="close-btn" onClick={onClose}>
           ✖
         </button>
-        <h2>Añadir Nuevo Vehículo</h2>
+        <h2>{isEditMode ? "Editar Vehículo" : "Añadir Nuevo Vehículo"}</h2>
         {mostrarInfo && (
           <div
             className={`info-label ${isError || isModelosError ? "error" : ""}`}
