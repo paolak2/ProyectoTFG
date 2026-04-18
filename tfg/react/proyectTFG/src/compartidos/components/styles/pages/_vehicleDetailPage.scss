@@ -5,7 +5,9 @@
 
 .detail {
   background: $secondary-color-gris;
+  min-height: calc(100dvh - 88px);
   padding: $padding_lg;
+
   .vehicleDetail-page {
     width: 100%;
 
@@ -43,12 +45,10 @@
       &__overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.12) 0%,
-          rgba(0, 0, 0, 0.28) 55%,
-          rgba(0, 0, 0, 0.48) 100%
-        );
+        background: linear-gradient(180deg,
+            rgba(0, 0, 0, 0.12) 0%,
+            rgba(0, 0, 0, 0.28) 55%,
+            rgba(0, 0, 0, 0.48) 100%);
       }
 
       &__info {
@@ -83,6 +83,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
     .cardInfo {
       margin-top: 28px;
     }
@@ -136,6 +137,7 @@
         font-weight: 700;
       }
     }
+
     .service {
       margin-top: 1rem;
       display: flex;
@@ -146,6 +148,7 @@
       background-color: changeColor($primary-color, 90%);
       padding: $padding_md;
       border-radius: $border-radius;
+
       .info {
         p {
           text-align: center;
@@ -159,26 +162,31 @@
     grid-template-columns: repeat(3, 1fr);
     gap: $gap_lg;
   }
+
   .details-actionCards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $gap_lg;
   }
+
   .details-historial {
     padding: $padding_lg 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $gap_lg;
+
     h3 {
       text-align: center;
       font-size: clamp(16px, 1.8rem, 22px);
       color: $primary-color;
     }
+
     &-facturas {
       display: flex;
       flex-direction: column;
       gap: $gap_sm;
     }
+
     &-gasolina {
       display: flex;
       flex-direction: column;

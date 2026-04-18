@@ -1,12 +1,33 @@
 import express from "express";
 import cors from "cors";
-import { brands, models, insurances, vehicles, services } from "./data.js";
+import {
+  brands,
+  models,
+  insurances,
+  vehicles,
+  services,
+  workshops,
+} from "./data.js";
 
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/api", (req, res) => {
+  res.json({
+    message: "API mock funcionando",
+    endpoints: [
+      "/api/brands",
+      "/api/models",
+      "/api/insurances",
+      "/api/services",
+      "/api/vehicles",
+      "/api/vehicle/:userId/:id",
+    ],
+  });
+});
 
 /* =========================
    GET ENDPOINTS
@@ -38,6 +59,43 @@ app.get("/api/services", (req, res) => {
       return res.status(404).json({ message: "No hay servicios" });
     }
     res.json(services);
+  }, 300);
+});
+
+app.get("/api/workshops", (req, res) => {
+  setTimeout(() => {
+    if (!workshops.length) {
+      return res.status(404).json({ message: "No hay talleres" });
+    }
+
+    const q = String(req.query.q ?? "")
+      .trim()
+      .toLowerCase();
+    const service = String(req.query.service ?? "").trim();
+
+    let list = workshops;
+
+    if (service) {
+      list = list.filter((w) => w.services?.includes(service));
+    }
+
+    if (q) {
+      list = list.filter((w) => {
+        const haystack = [
+          w.name,
+          w.address,
+          w.status,
+          w.phone,
+          w.email,
+          w.website,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
+    res.json(list);
   }, 300);
 });
 

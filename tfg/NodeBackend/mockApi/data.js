@@ -62,6 +62,61 @@ export const services = [
   { id: 6, name: "averia" },
 ];
 
+export const workshops = [
+  {
+    id: 1,
+    name: "Taller AutoExpert Madrid",
+    rating: 4.8,
+    address: "Calle Alcalá 210, Madrid",
+    responseTime: "15 min",
+    phone: "+34 911 123 456",
+    email: "contacto@autoexpert.es",
+    services: ["revision", "aceite", "frenos", "neumaticos"],
+    schedule: "L-V 08:00-19:00 | S 09:00-14:00",
+    status: "Abierto",
+    website: "https://www.autoexpert.es",
+  },
+  {
+    id: 2,
+    name: "MotorPlus Service",
+    rating: 4.5,
+    address: "Avenida de Andalucía 85, Sevilla",
+    responseTime: "30 min",
+    phone: "+34 954 222 333",
+    email: "info@motorplus.es",
+    services: ["aceite", "bateria", "averia"],
+    schedule: "L-V 09:00-18:30",
+    status: "Abierto",
+    website: "https://www.motorplus.es",
+  },
+  {
+    id: 3,
+    name: "Box Rápido BCN",
+    rating: 4.2,
+    address: "Carrer d'Aragó 145, Barcelona",
+    responseTime: "45 min",
+    phone: "+34 934 456 789",
+    email: "hola@boxrapido.com",
+    services: ["revision", "frenos", "neumaticos", "averia"],
+    schedule: "L-S 08:30-20:00",
+    status: "Cerrado",
+    website: "https://www.boxrapido.com",
+  },
+  {
+    id: 4,
+    name: "Taller Norte Premium",
+    rating: 4.9,
+    address: "Calle de Uría 32, Oviedo",
+    responseTime: "10 min",
+    phone: "+34 985 555 010",
+    email: "premium@tallernorte.es",
+    services: ["revision", "aceite", "frenos", "bateria", "averia"],
+    schedule: "L-V 07:30-19:30",
+    status: "Abierto",
+    website: "https://www.tallernorte.es",
+  },
+];
+
 export const vehicles = [
   {
     id: 1,

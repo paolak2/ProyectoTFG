@@ -6,20 +6,18 @@ $primary-color-oscuro: #022c6f;
 
 $secondary-color-claro: #fafafa;
 $secondary-color-gris: #ecf1f5;
-$background-degradado: linear-gradient(
-  150deg,
-  $primary-color-medio 10%,
-  $primary-color 100%
-);
+$background-degradado: linear-gradient(150deg,
+    $primary-color-medio 10%,
+    $primary-color 100%);
 
 $text-color: #40557f;
 $text-color-white: #fafcff;
 $text-color-gray: #888888;
 
 $primary-hover: color.scale($primary-color, $lightness: -20%);
-$border-bottom-line: 1px solid
-  color.scale($secondary-color-gris, $lightness: -20%);
+$border-bottom-line: 1px solid color.scale($secondary-color-gris, $lightness: -20%);
 
+$stars-color: #e8a317;
 $error: rgb(205, 5, 5);
 $success: #ccf2d8;
 $warning: #fbf2c6;

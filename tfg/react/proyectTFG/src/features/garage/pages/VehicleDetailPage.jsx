@@ -9,8 +9,6 @@ import ActionCards from "../components/ActionCards";
 
 function VehicleDetailPage() {
   const { id: vehicleId, userId } = useParams();
-  const [pageSelected, setPageSelected] = useState("garage-detail");
-
   const [modalType, setModalType] = useState(null);
 
   const openFacturaModal = () => setModalType("factura");
@@ -34,8 +32,27 @@ function VehicleDetailPage() {
     },
   });
 
-  if (isPending) return <p>Cargando...</p>;
-  if (isError) return <p>Error: {error?.message}</p>;
+  if (isPending) {
+    return (
+      <>
+        <Navbar />
+        <div className="detail">
+          <p>Cargando...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (isError) {
+    return (
+      <>
+        <Navbar />
+        <div className="detail">
+          <p>Error: {error?.message}</p>
+        </div>
+      </>
+    );
+  }
 
   const totalFacturas =
     vehicle.facturas?.historial?.reduce(
@@ -52,7 +69,7 @@ function VehicleDetailPage() {
   const totalGastos = totalFacturas + totalGasolina;
   return (
     <>
-      <Navbar pageSelected={pageSelected} setPageSelected={setPageSelected} />
+      <Navbar />
       <div className="detail">
         <div className="vehicleDetail-page">
           <section className="vehicleHero">

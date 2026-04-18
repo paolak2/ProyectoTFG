@@ -17,7 +17,6 @@ async function fetchVehicles() {
 }
 
 function GaragePage() {
-  const [pageSelected, setPageSelected] = useState("garage");
   const [mostrarModal, setMostrarModal] = useState(false);
   const [vehicleToEdit, setVehicleToEdit] = useState(null);
   const {
@@ -61,7 +60,7 @@ function GaragePage() {
   }
   return (
     <>
-      <Navbar pageSelected={pageSelected} setPageSelected={setPageSelected} />
+      <Navbar />
       <div className="bodyGarage">
         <div className="garage">
           <div className="garage__header">
