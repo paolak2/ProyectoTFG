@@ -1,0 +1,128 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.custom-option {
+  display: flex;
+  align-items: center;
+  gap: $gap_base;
+  padding: $padding_base;
+  cursor: pointer;
+  span {
+    width: 1rem;
+    height: 1rem;
+    border-radius: $border-radius;
+    border: 1px solid $text-color-gray;
+  }
+}
+
+.modal-new-vehicle {
+  background-color: $secondary-color-claro;
+  padding: $padding_lg;
+  border-radius: $border-radius;
+  font-size: clamp(10px, 1.2vw, 14px);
+  width: clamp(300px, 80%, 500px);
+  overflow-y: auto;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  max-height: 95vh;
+  h2 {
+    margin-bottom: $gap_sm;
+    color: $text-color;
+  }
+  p {
+    margin-bottom: $gap_sm;
+    color: $text-color-gray;
+  }
+  .info-label {
+    padding: $padding_md;
+    margin: $gap_base;
+    border-radius: $border;
+    background-color: changeColor($primary-color, 80%);
+    color: $text-color;
+  }
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $gap_sm;
+
+    .datos {
+      padding: $padding_sm;
+      border-radius: $border;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: $gap_base;
+      background-color: changeColor($text-color-gray, 80%);
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      color: $text-color-gray;
+      gap: $gap_base;
+      input {
+        width: 100%;
+        padding: $padding_base;
+        border-radius: $border;
+        border: 1px solid $text-color-gray;
+        &:focus {
+          outline: 2px solid $primary-color;
+          border-color: $primary-color;
+        }
+        &.error {
+          border-color: $error;
+          transition: all 0.2s ease;
+        }
+      }
+      .select-error .select__control {
+        border-color: $error !important;
+      }
+      .error-text {
+        color: $error;
+        font-size: clamp(10px, 0.5rem, 12px);
+        display: block;
+      }
+    }
+  }
+
+  button[type="submit"] {
+    background-color: $primary-color;
+    color: white;
+    padding: $padding_md $padding_lg;
+    border-radius: $border-radius;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: changeColor($primary-color, 10%);
+    }
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: $border;
+  padding: $padding-sm;
+  border: 1px solid $text-color;
+  font-size: clamp(14px, 1rem, 16px);
+  cursor: pointer;
+  color: $text-color;
+}

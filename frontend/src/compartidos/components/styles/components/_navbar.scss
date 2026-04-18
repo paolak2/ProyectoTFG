@@ -1,0 +1,70 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+
+.navbar {
+  background-color: $secondary-color-claro;
+  border-bottom: $border-bottom-line;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  header {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: $padding_lg;
+    align-items: center;
+    .marca {
+      display: flex;
+      gap: $gap_md;
+
+      .logo {
+        background-color: $primary-color;
+        border-radius: $border-radius;
+        align-items: center;
+        display: flex;
+        font-size: 1.5rem;
+        padding: $padding_sm;
+        color: $text-color-white;
+      }
+      .nombre {
+        h2 {
+          font-size: 1.5rem;
+          color: $primary-color;
+        }
+        p {
+          font-size: 0.9rem;
+          color: $text-color;
+        }
+      }
+    }
+
+    nav {
+      font-weight: 600;
+      display: flex;
+      gap: $gap_sm;
+      text-align: center;
+
+      .selected {
+        background-color: $primary-color;
+      }
+      a {
+        color: $text-color-white;
+      }
+      :link {
+        background-color: changeColor($primary-color, 30%);
+        padding: $padding_sm $padding_md;
+        border-radius: $border-radius;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: 0.2s ease-in-out;
+        &:hover {
+          background-color: $primary-color;
+        }
+      }
+    }
+  }
+}

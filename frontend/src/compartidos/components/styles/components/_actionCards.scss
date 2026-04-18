@@ -1,0 +1,93 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+@use "sass:map";
+
+.action {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $gap_base;
+
+  padding: $padding_lg;
+  border-radius: $border-radius-max;
+  background-color: $secondary-color-claro;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: changeColor($primary-color, 80%);
+    transform: translateY(-2px);
+  }
+
+  i {
+    font-size: 1.5rem;
+    color: $text-color;
+    margin-bottom: $gap_base;
+  }
+
+  h2 {
+    font-size: clamp(16px, 1.25rem, 20px);
+    font-weight: 600;
+    color: #111827;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: $text-color-gray;
+    font-weight: 300;
+    transition: color 0.2s ease;
+  }
+
+  &:hover button {
+    color: #4b5563;
+  }
+}
+
+.historial {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $gap_base;
+
+  padding: $padding_lg;
+  border-radius: $border-radius-max;
+  background-color: $secondary-color-claro;
+
+  h2 {
+    font-size: clamp(16px, 1.25rem, 20px);
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  i,
+  p {
+    font-size: clamp(12px, 1rem, 18px);
+    color: $text-color-gray;
+    margin: 0;
+  }
+  span {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: clamp(14px, 1.3rem, 20px);
+    color: $text-color;
+  }
+  .fecha {
+    display: flex;
+    flex-direction: row;
+    gap: $gap_base;
+  }
+}

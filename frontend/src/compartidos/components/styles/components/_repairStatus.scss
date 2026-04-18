@@ -1,0 +1,34 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+@use "sass:map";
+
+.repair-status {
+  background-color: $secondary-color-claro;
+  padding: $padding_md;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-bottom: $border-bottom-line;
+
+  &-details,
+  &-service {
+    p {
+      display: flex;
+      align-items: center;
+      gap: $padding_sm;
+      margin-bottom: $padding_md;
+      color: $text-color-gray;
+
+      strong {
+        color: $text-color;
+      }
+    }
+  }
+
+  &-service {
+    background-color: changeColor($primary-color, 90%);
+    padding: $padding_md;
+    border-radius: $border-radius;
+  }
+}

@@ -1,0 +1,45 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+@use "sass:color";
+@use "sass:map";
+
+.stats-card {
+  background-color: $secondary-color-claro;
+  border-bottom: 1px solid color.scale($secondary-color-gris, $lightness: -20%);
+  border-radius: $border-radius;
+  align-items: center;
+  padding: $padding_md;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  .card-icon {
+    font-size: 2rem;
+    margin-right: $gap_md;
+    padding: $padding_md;
+    border-radius: $border-radius;
+    &-total {
+      background-color: changeColor($primary-color, 80%);
+      color: $primary-color;
+    }
+    &-disponible {
+      background-color: changeColor($success, 50%);
+      color: changeColor($success, -30%);
+    }
+    &-taller {
+      background-color: changeColor($warning, 50%);
+      color: changeColor($warning, -40%);
+    }
+  }
+  .card-info {
+    .card-title {
+      font-size: 1rem;
+      color: $text-color-gray;
+    }
+    .card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-color;
+    }
+  }
+}
