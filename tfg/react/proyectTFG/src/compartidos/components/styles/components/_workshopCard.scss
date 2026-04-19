@@ -1,0 +1,164 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+
+.workshopCard {
+  max-width: 25rem;
+  background: $secondary-color-claro;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: $padding_lg;
+  display: flex;
+  flex-direction: column;
+  gap: $gap_sm;
+
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $padding_lg;
+  }
+
+  .workshop-image {
+    background-color: $primary-color;
+    width: 5rem;
+    height: 5rem;
+    border-radius: $border-radius;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: cover;
+    }
+
+    i {
+      font-size: 1.5rem;
+      color: $text-color-white;
+    }
+  }
+
+  .workshop-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: $padding_base;
+
+    h4 {
+      color: $primary-color;
+      font-size: clamp(14px, 1.2rem, 18px);
+      font-weight: bold;
+    }
+
+    p {
+      font-size: clamp(10px, 0.8rem, 14px);
+      color: $text-color-gray;
+    }
+  }
+
+  .workshop-status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: $gap_sm;
+    flex-wrap: wrap;
+
+    &-text {
+      font-size: clamp(10px, 0.8rem, 14px);
+      color: $text-color;
+      font-weight: bold;
+      background-color: changeColor($warning, 50%);
+      border: 2px solid $warning;
+      padding: $padding_base $padding_md;
+      border-radius: $border-radius-max;
+    }
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: $gap_sm;
+    margin-top: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  &__rating-stars {
+    display: inline-flex;
+    gap: 0.15rem;
+    color: $stars-color;
+    font-size: 1rem;
+  }
+
+  &__rating-value {
+    font-weight: bold;
+    color: $text-color;
+    font-size: clamp(10px, 0.8rem, 14px);
+  }
+
+  &__rating-max {
+    font-weight: bold;
+    color: $text-color-gray;
+    font-size: clamp(10px, 0.8rem, 14px);
+  }
+
+  &__services {
+    margin: $padding_base 0;
+    padding: $padding_md;
+    background-color: changeColor($secondary-color-gris, 30%);
+    border-radius: $border-radius-max;
+    display: flex;
+    gap: $gap_sm;
+    flex-wrap: wrap;
+
+    span {
+      background: changeColor($primary-color, 50%);
+      color: $primary-color-oscuro;
+      border-radius: $border-radius-max;
+      padding: $padding_base $padding_md;
+      font-size: clamp(10px, 1rem, 14px);
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+  }
+
+  .workshop-details {
+    display: flex;
+    flex-direction: column;
+    gap: $padding_base;
+
+    p {
+      font-size: clamp(10px, 0.8rem, 14px);
+      color: $text-color-gray;
+    }
+
+    a {
+      color: $text-color;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: clamp(12px, 1rem, 16px);
+    }
+  }
+
+  .workshop-footer {
+    display: grid;
+    gap: $padding_sm;
+
+    button {
+      padding: $padding_sm $padding_md;
+      border-radius: $border-radius;
+      border: none;
+      background-color: $primary-color;
+      color: $text-color-white;
+      cursor: pointer;
+      box-shadow: $shadow-buttons;
+
+      &:hover {
+        background-color: $primary-hover;
+        box-shadow: none;
+      }
+    }
+  }
+}
