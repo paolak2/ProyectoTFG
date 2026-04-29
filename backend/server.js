@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const initDatabase = require("./initDatabase");
 const app = express();
 app.use(cors());
 app.use(express.json());
