@@ -7,6 +7,10 @@ import {
   vehicles,
   services,
   workshops,
+  workshopUsers,
+  workshopPanel,
+  workshopChatMessages,
+  workshopInvoices,
 } from "./data.js";
 
 const app = express();
@@ -25,6 +29,11 @@ app.get("/api", (req, res) => {
       "/api/services",
       "/api/vehicles",
       "/api/vehicle/:userId/:id",
+      "/api/taller/session?role=admin|empleado",
+      "/api/taller/panel",
+      "/api/taller/chat",
+      "/api/taller/facturacion",
+      "/api/taller/ver-facturas",
     ],
   });
 });
@@ -96,6 +105,55 @@ app.get("/api/workshops", (req, res) => {
     }
 
     res.json(list);
+  }, 300);
+});
+
+app.get("/api/taller/session", (req, res) => {
+  const role = String(req.query.role ?? "admin");
+  const sessionUser =
+    workshopUsers.find((user) => user.role === role) ?? workshopUsers[0];
+
+  setTimeout(() => {
+    res.json(sessionUser);
+  }, 300);
+});
+
+app.get("/api/taller/panel", (req, res) => {
+  setTimeout(() => {
+    res.json(workshopPanel);
+  }, 300);
+});
+
+app.get("/api/taller/chat", (req, res) => {
+  setTimeout(() => {
+    res.json(workshopChatMessages);
+  }, 300);
+});
+
+app.get("/api/taller/facturacion", (req, res) => {
+  const role = String(req.query.role ?? "admin");
+  if (role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Solo admin puede acceder a facturacion" });
+  }
+
+  const totalAmount = workshopInvoices.reduce((sum, invoice) => sum + invoice.total, 0);
+  setTimeout(() => {
+    res.json({ totalInvoices: workshopInvoices.length, totalAmount });
+  }, 300);
+});
+
+app.get("/api/taller/ver-facturas", (req, res) => {
+  const role = String(req.query.role ?? "empleado");
+  if (role !== "empleado") {
+    return res
+      .status(403)
+      .json({ message: "Solo empleado puede acceder a ver facturas" });
+  }
+
+  setTimeout(() => {
+    res.json(workshopInvoices);
   }, 300);
 });
 

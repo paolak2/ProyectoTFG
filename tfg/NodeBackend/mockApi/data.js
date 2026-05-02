@@ -248,3 +248,26 @@ export const vehicles = [
     },
   },
 ];
+
+export const workshopUsers = [
+  { id: 1, name: "Marta Admin", role: "admin" },
+  { id: 2, name: "Diego Empleado", role: "empleado" },
+];
+
+export const workshopPanel = {
+  activeOrders: 12,
+  waitingVehicles: 5,
+  deliveriesToday: 3,
+};
+
+export const workshopChatMessages = [
+  { id: 1, author: "Recepcion", text: "Cliente de 1234ABC confirmado" },
+  { id: 2, author: "Mecanica", text: "Pedido de frenos ya entregado" },
+  { id: 3, author: "Admin", text: "Recordad cerrar ordenes del dia" },
+];
+
+export const workshopInvoices = [
+  { id: 1, vehiclePlate: "1234ABC", total: 320, createdByRole: "admin" },
+  { id: 2, vehiclePlate: "2234ABC", total: 145, createdByRole: "empleado" },
+  { id: 3, vehiclePlate: "2896ABC", total: 580, createdByRole: "admin" },
+];
