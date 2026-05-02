@@ -117,6 +117,12 @@ export const workshops = [
   },
 ];
 
+const defaultOwnerUser1 = {
+  name: "Carlos García",
+  phone: "+34 600 111 222",
+  email: "carlos.garcia@example.com",
+};
+
 export const vehicles = [
   {
     id: 1,
@@ -131,11 +137,17 @@ export const vehicles = [
     status: "En Taller",
     mileage: 50000,
     ruta: null,
+    owner: defaultOwnerUser1,
     taller: {
-      name: "Taller AutoExpert",
-      entryDate: "2024-03-15",
-      estimatedFinish: "2024-03-25",
-      servicio: "Cambio de aceite y revisión general",
+      name: "Taller AutoExpert Madrid",
+      entryDate: "2026-04-28",
+      estimatedFinish: "2026-05-05",
+      exitDate: null,
+      servicio: "aceite",
+      serviceId: 2,
+      repairStatus: "en_curso",
+      performedByStaffId: 2,
+      additionalServices: [],
     },
     facturas: {
       totalGlobalAnyo: 640,
@@ -191,6 +203,7 @@ export const vehicles = [
     status: "Disponible",
     mileage: 20000,
     ruta: null,
+    owner: defaultOwnerUser1,
     taller: null,
     facturas: {
       totalGlobalAnyo: 0,
@@ -214,6 +227,7 @@ export const vehicles = [
     status: "Disponible",
     mileage: 20000,
     ruta: null,
+    owner: defaultOwnerUser1,
     taller: null,
     facturas: {
       totalGlobalAnyo: 0,
@@ -231,12 +245,13 @@ export const vehicles = [
     modelId: 4,
     insuranceId: 1,
     insuranceNumber: "MAP123",
-    plate: "1234ABC",
+    plate: "9922KLM",
     year: 2020,
     color: "Negro",
     status: "Disponible",
     mileage: 50000,
     ruta: null,
+    owner: defaultOwnerUser1,
     taller: null,
     facturas: {
       totalGlobalAnyo: 0,
@@ -247,6 +262,98 @@ export const vehicles = [
       historial: [],
     },
   },
+  {
+    id: 5,
+    userId: 1,
+    brandId: 5,
+    modelId: 9,
+    insuranceId: 3,
+    insuranceNumber: "AXA998877",
+    plate: "4455XYZ",
+    year: 2019,
+    color: "Gris",
+    status: "En Taller",
+    mileage: 78000,
+    ruta: null,
+    owner: {
+      name: "María López",
+      phone: "+34 611 444 555",
+      email: "maria.lopez@example.com",
+    },
+    taller: {
+      name: "Taller AutoExpert Madrid",
+      entryDate: "2026-05-01",
+      estimatedFinish: "2026-05-10",
+      exitDate: null,
+      servicio: "revision",
+      serviceId: 1,
+      repairStatus: "en_espera",
+      performedByStaffId: null,
+      additionalServices: [],
+    },
+    facturas: { totalGlobalAnyo: 0, historial: [] },
+    gastoGasolina: { totalUltimoMes: 0, historial: [] },
+  },
+  {
+    id: 6,
+    userId: 1,
+    brandId: 4,
+    modelId: 7,
+    insuranceId: 4,
+    insuranceNumber: "MMT112233",
+    plate: "2211GOLF",
+    year: 2021,
+    color: "Azul",
+    status: "Pendiente Recogida",
+    mileage: 34000,
+    ruta: null,
+    owner: defaultOwnerUser1,
+    taller: {
+      name: "Taller AutoExpert Madrid",
+      entryDate: "2026-04-20",
+      estimatedFinish: "2026-05-01",
+      exitDate: "2026-05-02",
+      servicio: "frenos",
+      serviceId: 3,
+      repairStatus: "finalizada",
+      performedByStaffId: 3,
+      additionalServices: [{ serviceId: 4, name: "neumaticos" }],
+    },
+    facturas: { totalGlobalAnyo: 0, historial: [] },
+    gastoGasolina: { totalUltimoMes: 0, historial: [] },
+  },
+  {
+    id: 7,
+    userId: 1,
+    brandId: 11,
+    modelId: 15,
+    insuranceId: 2,
+    insuranceNumber: "ALL556677",
+    plate: "7788MAD",
+    year: 2023,
+    color: "Rojo",
+    status: "En Taller",
+    mileage: 12000,
+    ruta: null,
+    owner: {
+      name: "Laura Sánchez",
+      phone: "+34 622 333 888",
+      email: "laura.sanchez@example.com",
+    },
+    taller: {
+      name: "Taller AutoExpert Madrid",
+      entryDate: "2026-04-30",
+      estimatedFinish: "2026-05-03",
+      exitDate: null,
+      servicio: "averia",
+      serviceId: 6,
+      repairStatus: "en_curso",
+      performedByStaffId: 1,
+      additionalServices: [],
+    },
+    facturas: { totalGlobalAnyo: 0, historial: [] },
+    gastoGasolina: { totalUltimoMes: 0, historial: [] },
+  },
 ];
 
 export const workshopUsers = [
@@ -254,11 +361,12 @@ export const workshopUsers = [
   { id: 2, name: "Diego Empleado", role: "empleado" },
 ];
 
-export const workshopPanel = {
-  activeOrders: 12,
-  waitingVehicles: 5,
-  deliveriesToday: 3,
-};
+/** Personal del taller (selects de orden / reparación) */
+export const workshopStaff = [
+  { id: 1, name: "Marta Admin", role: "admin" },
+  { id: 2, name: "Diego Empleado", role: "empleado" },
+  { id: 3, name: "Ana Mecánica", role: "empleado" },
+];
 
 export const workshopChatMessages = [
   { id: 1, author: "Recepcion", text: "Cliente de 1234ABC confirmado" },

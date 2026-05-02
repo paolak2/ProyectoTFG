@@ -8,12 +8,64 @@ import {
   services,
   workshops,
   workshopUsers,
-  workshopPanel,
+  workshopStaff,
   workshopChatMessages,
   workshopInvoices,
 } from "./data.js";
 
 const app = express();
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isWorkshopPanelVehicle(v) {
+  return (
+    v.taller &&
+    (v.status === "En Taller" || v.status === "Pendiente Recogida")
+  );
+}
+
+function enrichWorkshopVehicle(vehicle) {
+  const brand = brands.find((b) => b.id == vehicle.brandId);
+  const model = models.find((m) => m.id == vehicle.modelId);
+  const svc = vehicle.taller?.serviceId
+    ? services.find((s) => s.id === vehicle.taller.serviceId)
+    : null;
+  const mechanic = vehicle.taller?.performedByStaffId
+    ? workshopStaff.find((s) => s.id === vehicle.taller.performedByStaffId)
+    : null;
+  return {
+    ...vehicle,
+    brandName: brand?.name || "",
+    modelName: model?.name || "",
+    serviceName: svc?.name ?? vehicle.taller?.servicio ?? "",
+    performedByName: mechanic?.name ?? null,
+  };
+}
+
+function computeWorkshopPanelPayload() {
+  const listed = vehicles.filter(isWorkshopPanelVehicle);
+  const today = todayISO();
+  const activeOrders = listed.filter(
+    (v) => v.taller.repairStatus === "en_curso",
+  ).length;
+  const waitingVehicles = listed.filter(
+    (v) => v.taller.repairStatus === "en_espera",
+  ).length;
+  const deliveriesToday = listed.filter(
+    (v) => v.taller.exitDate === today,
+  ).length;
+
+  return {
+    activeOrders,
+    waitingVehicles,
+    deliveriesToday,
+    vehicles: listed.map(enrichWorkshopVehicle),
+    staff: workshopStaff,
+    services,
+  };
+}
 const PORT = 3001;
 
 app.use(cors());
@@ -31,6 +83,8 @@ app.get("/api", (req, res) => {
       "/api/vehicle/:userId/:id",
       "/api/taller/session?role=admin|empleado",
       "/api/taller/panel",
+      "PATCH /api/taller/ordenes/:vehicleId",
+      "POST /api/taller/ordenes/:vehicleId/servicios",
       "/api/taller/chat",
       "/api/taller/facturacion",
       "/api/taller/ver-facturas",
@@ -120,8 +174,94 @@ app.get("/api/taller/session", (req, res) => {
 
 app.get("/api/taller/panel", (req, res) => {
   setTimeout(() => {
-    res.json(workshopPanel);
+    res.json(computeWorkshopPanelPayload());
   }, 300);
+});
+
+app.patch("/api/taller/ordenes/:vehicleId", (req, res) => {
+  const vehicleId = Number(req.params.vehicleId);
+  const vehicle = vehicles.find((v) => v.id === vehicleId);
+
+  if (!vehicle || !vehicle.taller || !isWorkshopPanelVehicle(vehicle)) {
+    return res.status(404).json({ message: "Orden no encontrada" });
+  }
+
+  const { repairStatus, performedByStaffId, serviceId } = req.body ?? {};
+  const allowedRepair = ["en_espera", "en_curso", "finalizada"];
+
+  if (repairStatus !== undefined) {
+    if (!allowedRepair.includes(repairStatus)) {
+      return res.status(400).json({ message: "Estado de reparación no válido" });
+    }
+    vehicle.taller.repairStatus = repairStatus;
+    if (repairStatus === "finalizada") {
+      vehicle.status = "Pendiente Recogida";
+      if (!vehicle.taller.exitDate) {
+        vehicle.taller.exitDate = todayISO();
+      }
+    } else if (repairStatus === "en_curso" || repairStatus === "en_espera") {
+      vehicle.status = "En Taller";
+    }
+  }
+
+  if (performedByStaffId !== undefined) {
+    vehicle.taller.performedByStaffId =
+      performedByStaffId === null ? null : Number(performedByStaffId);
+  }
+
+  if (serviceId !== undefined) {
+    const sid = Number(serviceId);
+    const svc = services.find((s) => s.id === sid);
+    if (!svc) {
+      return res.status(400).json({ message: "Servicio no válido" });
+    }
+    vehicle.taller.serviceId = sid;
+    vehicle.taller.servicio = svc.name;
+  }
+
+  setTimeout(() => {
+    res.json(enrichWorkshopVehicle(vehicle));
+  }, 200);
+});
+
+app.post("/api/taller/ordenes/:vehicleId/servicios", (req, res) => {
+  const vehicleId = Number(req.params.vehicleId);
+  const vehicle = vehicles.find((v) => v.id === vehicleId);
+
+  if (!vehicle || !vehicle.taller || !isWorkshopPanelVehicle(vehicle)) {
+    return res.status(404).json({ message: "Orden no encontrada" });
+  }
+
+  const { serviceId } = req.body ?? {};
+  if (serviceId === undefined || serviceId === null) {
+    return res.status(400).json({ message: "Falta serviceId" });
+  }
+
+  const sid = Number(serviceId);
+  const svc = services.find((s) => s.id === sid);
+  if (!svc) {
+    return res.status(400).json({ message: "Servicio no válido" });
+  }
+
+  if (!Array.isArray(vehicle.taller.additionalServices)) {
+    vehicle.taller.additionalServices = [];
+  }
+
+  const exists = vehicle.taller.additionalServices.some(
+    (x) => x.serviceId === sid,
+  );
+  if (exists) {
+    return res.status(409).json({ message: "El servicio ya está añadido" });
+  }
+
+  vehicle.taller.additionalServices.push({
+    serviceId: sid,
+    name: svc.name,
+  });
+
+  setTimeout(() => {
+    res.status(201).json(enrichWorkshopVehicle(vehicle));
+  }, 200);
 });
 
 app.get("/api/taller/chat", (req, res) => {

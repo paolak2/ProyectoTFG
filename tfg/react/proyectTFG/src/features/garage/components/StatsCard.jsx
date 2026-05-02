@@ -32,6 +32,24 @@ const PRESET_CONFIG = {
     icon: "bi bi-fuel-pump",
     variant: "neutral",
   },
+  ordenesActivas: {
+    title: "Órdenes activas",
+    icon: "bi bi-clipboard-check",
+    variant: "primary",
+    class: "total",
+  },
+  vehiculosEspera: {
+    title: "Vehículos en espera",
+    icon: "bi bi-hourglass-split",
+    variant: "warning",
+    class: "taller",
+  },
+  entregasHoy: {
+    title: "Entregas hoy",
+    icon: "bi bi-truck",
+    variant: "success",
+    class: "disponible",
+  },
 };
 
 function StatsCard({ type, title, value, icon, variant, className = "" }) {

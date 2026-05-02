@@ -1,0 +1,92 @@
+@use "../base/variables" as *;
+@use "../base/functions" as *;
+
+.modal-new-vehicle--compact {
+  width: clamp(280px, 92%, 440px);
+}
+
+.workshop-modal-hint {
+  color: $text-color-gray;
+  font-size: clamp(11px, 0.9rem, 14px);
+  margin-bottom: $gap_sm;
+}
+
+.workshop-modal-fields {
+  margin: $gap_base 0;
+  line-height: 1.5;
+
+  a {
+    color: $primary-color;
+    word-break: break-all;
+  }
+}
+
+.workshop-modal-form {
+  margin-top: $gap_base;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: $gap_sm;
+    color: $text-color-gray;
+    margin-bottom: $padding_md;
+
+    select {
+      padding: $padding_base;
+      border-radius: $border-radius;
+      border: 1px solid $text-color-gray;
+    }
+  }
+}
+
+.workshop-modal-error {
+  color: $error;
+  font-size: 0.9rem;
+}
+
+.workshop-modal-actions {
+  display: flex;
+  gap: $padding_sm;
+  justify-content: flex-end;
+  margin-top: $padding_md;
+}
+
+.workshop-btn-secondary {
+  padding: $padding_sm $padding_md;
+  border-radius: $border-radius;
+  border: 1px solid $text-color-gray;
+  background: transparent;
+  color: $text-color;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.workshop-extra-services {
+  margin-top: $padding_sm;
+  padding: $padding_sm;
+  border-radius: $border-radius;
+  background: changeColor($text-color-gray, 85%);
+
+  ul {
+    margin: $padding_sm 0 0 $padding_lg;
+    color: $text-color;
+  }
+}
+
+.workshop-vehicle-buttons {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+article.workshop-vehicle-card .vehicle-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+
+  &:hover {
+    background-color: $primary-color;
+  }
+}

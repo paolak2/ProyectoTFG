@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import WorkshopAuthContext from "./workshopAuthContext";
+import WorkshopAuthContext from "./workshopAuthReactContext";
 
 function useWorkshopAuth() {
   const context = useContext(WorkshopAuthContext);

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { API_TALLER_SESSION_URL } from "../../../constantes/constantes";
-import WorkshopAuthContext from "./workshopAuthContext";
+import WorkshopAuthContext from "./workshopAuthReactContext";
 
 const VALID_ROLES = ["admin", "empleado"];
 

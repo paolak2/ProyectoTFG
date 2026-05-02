@@ -50,6 +50,7 @@ function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }
           workshop={vehicle.taller.name}
           entryDate={vehicle.taller.entryDate}
           estimatedFinish={vehicle.taller.estimatedFinish}
+          exitDate={vehicle.taller.exitDate}
           service={vehicle.taller.servicio}
         />
       )}
