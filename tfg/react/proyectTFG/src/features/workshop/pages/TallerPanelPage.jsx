@@ -8,19 +8,18 @@ import EditWorkshopOrderModal from "../components/EditWorkshopOrderModal";
 import AddWorkshopServiceModal from "../components/AddWorkshopServiceModal";
 import useWorkshopAuth from "../context/useWorkshopAuth";
 
-async function fetchPanel() {
-  const response = await fetch(API_TALLER_PANEL_URL);
-  if (!response.ok) {
-    throw new Error("No se pudo cargar el panel del taller");
-  }
-  return response.json();
-}
-
 function TallerPanelPage() {
-  const { user, role } = useWorkshopAuth();
+  const { user, role, authFetch } = useWorkshopAuth();
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["taller-panel"],
-    queryFn: fetchPanel,
+    queryKey: ["taller-panel", user?.workshopId],
+    queryFn: async () => {
+      const response = await authFetch(API_TALLER_PANEL_URL);
+      if (!response.ok) {
+        throw new Error("No se pudo cargar el panel del taller");
+      }
+      return response.json();
+    },
+    enabled: Boolean(user?.workshopId),
   });
 
   const [modal, setModal] = useState(null);
@@ -29,7 +28,7 @@ function TallerPanelPage() {
     <>
       <div className="garage__header">
         <div>
-          <h1>Panel taller</h1>
+          <h1>{data?.workshopName ?? "Taller"}</h1>
           <p>
             Órdenes en curso y entregas · sesión:{" "}
             <strong>{user?.name}</strong> ({role})
@@ -76,7 +75,7 @@ function TallerPanelPage() {
           vehicle={modal.vehicle}
           staff={data.staff}
           services={data.services}
-          sessionStaffId={user?.id}
+          sessionStaffId={user?.staffId ?? user?.id}
           onClose={() => setModal(null)}
         />
       )}

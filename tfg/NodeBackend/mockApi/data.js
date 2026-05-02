@@ -53,13 +53,16 @@ export const insurances = [
   { id: 10, name: "Helvetia" },
 ];
 
+/** IVA en facturas del taller (21%). El importe en catálogo es sin IVA. */
+export const TALLER_VAT_RATE = 0.21;
+
 export const services = [
-  { id: 1, name: "revision" },
-  { id: 2, name: "aceite" },
-  { id: 3, name: "frenos" },
-  { id: 4, name: "neumaticos" },
-  { id: 5, name: "bateria" },
-  { id: 6, name: "averia" },
+  { id: 1, name: "revision", priceExVat: 89 },
+  { id: 2, name: "aceite", priceExVat: 55 },
+  { id: 3, name: "frenos", priceExVat: 120 },
+  { id: 4, name: "neumaticos", priceExVat: 200 },
+  { id: 5, name: "bateria", priceExVat: 95 },
+  { id: 6, name: "averia", priceExVat: 150 },
 ];
 
 export const workshops = [
@@ -120,7 +123,7 @@ export const workshops = [
 const defaultOwnerUser1 = {
   name: "Carlos García",
   phone: "+34 600 111 222",
-  email: "carlos.garcia@example.com",
+  email: "carlos@autolink.demo",
 };
 
 export const vehicles = [
@@ -137,6 +140,7 @@ export const vehicles = [
     status: "En Taller",
     mileage: 50000,
     ruta: null,
+    workshopId: 1,
     owner: defaultOwnerUser1,
     taller: {
       name: "Taller AutoExpert Madrid",
@@ -203,6 +207,7 @@ export const vehicles = [
     status: "Disponible",
     mileage: 20000,
     ruta: null,
+    workshopId: null,
     owner: defaultOwnerUser1,
     taller: null,
     facturas: {
@@ -227,6 +232,7 @@ export const vehicles = [
     status: "Disponible",
     mileage: 20000,
     ruta: null,
+    workshopId: null,
     owner: defaultOwnerUser1,
     taller: null,
     facturas: {
@@ -251,6 +257,7 @@ export const vehicles = [
     status: "Disponible",
     mileage: 50000,
     ruta: null,
+    workshopId: null,
     owner: defaultOwnerUser1,
     taller: null,
     facturas: {
@@ -275,6 +282,7 @@ export const vehicles = [
     status: "En Taller",
     mileage: 78000,
     ruta: null,
+    workshopId: 1,
     owner: {
       name: "María López",
       phone: "+34 611 444 555",
@@ -307,6 +315,7 @@ export const vehicles = [
     status: "Pendiente Recogida",
     mileage: 34000,
     ruta: null,
+    workshopId: 1,
     owner: defaultOwnerUser1,
     taller: {
       name: "Taller AutoExpert Madrid",
@@ -335,6 +344,7 @@ export const vehicles = [
     status: "En Taller",
     mileage: 12000,
     ruta: null,
+    workshopId: 1,
     owner: {
       name: "Laura Sánchez",
       phone: "+34 622 333 888",
@@ -356,16 +366,70 @@ export const vehicles = [
   },
 ];
 
-export const workshopUsers = [
-  { id: 1, name: "Marta Admin", role: "admin" },
-  { id: 2, name: "Diego Empleado", role: "empleado" },
+/**
+ * Cuentas iniciales (contraseña en claro; el servidor genera passwordHash al arrancar).
+ * role: cliente | admin | empleado
+ * workshopId: taller al que pertenece el personal (null para clientes)
+ * staffId: id en workshopStaff para órdenes / mecánico asignado (null si no aplica)
+ */
+export const accountSeeds = [
+  {
+    id: 1,
+    email: "carlos@autolink.demo",
+    password: "Demo1234",
+    name: "Carlos García",
+    phone: "+34 600 111 222",
+    dni: "12345678A",
+    role: "cliente",
+    workshopId: null,
+    staffId: null,
+    cif: null,
+  },
+  {
+    id: 2,
+    email: "marta@autolink.demo",
+    password: "Demo1234",
+    name: "Marta Admin",
+    phone: "+34 911 123 456",
+    dni: null,
+    role: "admin",
+    workshopId: 1,
+    staffId: 1,
+    cif: "B12345678",
+  },
+  {
+    id: 3,
+    email: "diego@autolink.demo",
+    password: "Demo1234",
+    name: "Diego Empleado",
+    phone: "+34 911 123 457",
+    dni: null,
+    role: "empleado",
+    workshopId: 1,
+    staffId: 2,
+    cif: null,
+  },
+  {
+    id: 4,
+    email: "pedro@motorplus.demo",
+    password: "Demo1234",
+    name: "Pedro Recepción",
+    phone: "+34 954 222 334",
+    dni: null,
+    role: "admin",
+    workshopId: 2,
+    staffId: 4,
+    cif: "B87654321",
+  },
 ];
 
-/** Personal del taller (selects de orden / reparación) */
+/** Personal del taller (selects de orden / reparación). Cada ítem pertenece a un workshopId. */
 export const workshopStaff = [
-  { id: 1, name: "Marta Admin", role: "admin" },
-  { id: 2, name: "Diego Empleado", role: "empleado" },
-  { id: 3, name: "Ana Mecánica", role: "empleado" },
+  { id: 1, name: "Marta Admin", role: "admin", workshopId: 1 },
+  { id: 2, name: "Diego Empleado", role: "empleado", workshopId: 1 },
+  { id: 3, name: "Ana Mecánica", role: "empleado", workshopId: 1 },
+  { id: 4, name: "Pedro Recepción", role: "admin", workshopId: 2 },
+  { id: 5, name: "Elena Mecánica", role: "empleado", workshopId: 2 },
 ];
 
 export const workshopChatMessages = [
@@ -375,7 +439,98 @@ export const workshopChatMessages = [
 ];
 
 export const workshopInvoices = [
-  { id: 1, vehiclePlate: "1234ABC", total: 320, createdByRole: "admin" },
-  { id: 2, vehiclePlate: "2234ABC", total: 145, createdByRole: "empleado" },
-  { id: 3, vehiclePlate: "2896ABC", total: 580, createdByRole: "admin" },
+  {
+    id: 1,
+    workshopId: 1,
+    invoiceNumber: "FAC-2026-0001",
+    vehicleId: 1,
+    vehiclePlate: "1234ABC",
+    brandName: "BMW",
+    modelName: "Serie 3",
+    ownerName: "Carlos García",
+    issueDate: "2026-05-01",
+    year: 2026,
+    month: 5,
+    status: "paid",
+    paidAt: "2026-05-02T12:00:00.000Z",
+    lines: [
+      {
+        serviceId: 2,
+        name: "aceite",
+        quantity: 1,
+        unitPriceExVat: 55,
+        lineTotalExVat: 55,
+      },
+      {
+        serviceId: 1,
+        name: "revision",
+        quantity: 1,
+        unitPriceExVat: 89,
+        lineTotalExVat: 89,
+      },
+    ],
+    baseTotal: 144,
+    ivaRate: TALLER_VAT_RATE,
+    ivaAmount: 30.24,
+    totalWithVat: 174.24,
+    createdByRole: "admin",
+  },
+  {
+    id: 2,
+    workshopId: 1,
+    invoiceNumber: "FAC-2026-0002",
+    vehicleId: 5,
+    vehiclePlate: "4455XYZ",
+    brandName: "Toyota",
+    modelName: "Corolla",
+    ownerName: "María López",
+    issueDate: "2026-05-02",
+    year: 2026,
+    month: 5,
+    status: "pending",
+    paidAt: null,
+    lines: [
+      {
+        serviceId: 4,
+        name: "neumaticos",
+        quantity: 1,
+        unitPriceExVat: 200,
+        lineTotalExVat: 200,
+      },
+    ],
+    baseTotal: 200,
+    ivaRate: TALLER_VAT_RATE,
+    ivaAmount: 42,
+    totalWithVat: 242,
+    createdByRole: "admin",
+  },
+  {
+    id: 3,
+    workshopId: 1,
+    invoiceNumber: "FAC-2026-0003",
+    vehicleId: 6,
+    vehiclePlate: "2211GOLF",
+    brandName: "Volkswagen",
+    modelName: "Golf",
+    ownerName: "Carlos García",
+    issueDate: "2026-04-28",
+    year: 2026,
+    month: 4,
+    status: "paid",
+    paidAt: "2026-04-29T09:00:00.000Z",
+    lines: [
+      {
+        serviceId: 3,
+        name: "frenos",
+        quantity: 1,
+        unitPriceExVat: 120,
+        lineTotalExVat: 120,
+      },
+    ],
+    baseTotal: 120,
+    ivaRate: TALLER_VAT_RATE,
+    ivaAmount: 25.2,
+    totalWithVat: 145.2,
+    createdByRole: "empleado",
+  },
 ];

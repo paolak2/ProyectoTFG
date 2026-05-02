@@ -1,9 +1,22 @@
 import RepairStatus from "./RepairStatus";
 import { useNavigate } from "react-router-dom";
 
-function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }) {
+function VehicleCard({
+  vehicle,
+  onClickFactura,
+  onClickGasolina,
+  onClickEditar,
+  onSolicitarCita,
+}) {
   const navigate = useNavigate();
   const rutaDetalles = `/vehicle/${vehicle.userId}/${vehicle.id}`;
+
+  const puedeSolicitarCita =
+    vehicle.status === "Disponible" && !vehicle.solicitudCita;
+
+  const statusClass = vehicle.status
+    .toLowerCase()
+    .replace(/\s/g, "-");
 
   return (
     <article>
@@ -20,9 +33,7 @@ function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }
           <h5>{vehicle.modelName}</h5>
           <p>{vehicle.plate}</p>
         </div>
-        <div
-          className={`vehicle-status vehicle-status-${vehicle.status.toLowerCase().replace(/\s/g, "-")}`}
-        >
+        <div className={`vehicle-status vehicle-status-${statusClass}`}>
           {vehicle.status === "En Taller" && (
             <i className="bi bi-exclamation-triangle"></i>
           )}
@@ -32,9 +43,29 @@ function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }
           {vehicle.status === "Pendiente Recogida" && (
             <i className="bi bi-clock"></i>
           )}
+          {vehicle.status === "Cita programada" && (
+            <i className="bi bi-calendar-event"></i>
+          )}
           {vehicle.status}
         </div>
       </div>
+
+      {vehicle.citaRechazoMensaje && (
+        <p className="cita-rechazo-msg" role="alert">
+          {vehicle.citaRechazoMensaje}
+        </p>
+      )}
+
+      {vehicle.solicitudCita?.fase === "pendiente" && (
+        <p className="cita-banner cita-banner--info">
+          Solicitud enviada. El taller la está revisando.
+        </p>
+      )}
+      {vehicle.solicitudCita?.fase === "aceptada" && (
+        <p className="cita-banner cita-banner--ok">
+          Cita aceptada. En breve te indicarán la fecha de ingreso.
+        </p>
+      )}
 
       <div className="vehicle-details">
         <p>
@@ -45,7 +76,17 @@ function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }
         </p>
       </div>
 
-      {vehicle.status === "En Taller" && (
+      {vehicle.status === "Cita programada" && vehicle.citaFechaEntrada && (
+        <section className="cita-programada-resumen">
+          <p>
+            <i className="bi bi-calendar-check"></i>
+            <strong>Fecha prevista de entrada al taller:</strong>{" "}
+            {vehicle.citaFechaEntrada}
+          </p>
+        </section>
+      )}
+
+      {vehicle.status === "En Taller" && vehicle.taller && (
         <RepairStatus
           workshop={vehicle.taller.name}
           entryDate={vehicle.taller.entryDate}
@@ -55,12 +96,25 @@ function VehicleCard({ vehicle, onClickFactura, onClickGasolina, onClickEditar }
         />
       )}
       <div className="vehicle-footer">
-        {vehicle.status === "En Taller" && <button>Contactar Taller</button>}
+        {vehicle.status === "En Taller" && <button type="button">Contactar Taller</button>}
+        {puedeSolicitarCita && (
+          <button type="button" onClick={() => onSolicitarCita?.(vehicle)}>
+            Solicitar cita
+          </button>
+        )}
         <div className="vehicle-buttons">
-          <button onClick={() => navigate(rutaDetalles)}>Ver Detalles</button>
-          <button onClick={onClickEditar}>Editar</button>
-          <button onClick={onClickGasolina}>Añadir Gasolina</button>
-          <button onClick={onClickFactura}>Añadir Factura</button>
+          <button type="button" onClick={() => navigate(rutaDetalles)}>
+            Ver Detalles
+          </button>
+          <button type="button" onClick={onClickEditar}>
+            Editar
+          </button>
+          <button type="button" onClick={onClickGasolina}>
+            Añadir Gasolina
+          </button>
+          <button type="button" onClick={onClickFactura}>
+            Añadir Factura
+          </button>
         </div>
       </div>
     </article>

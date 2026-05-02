@@ -1,6 +1,7 @@
 @use "./base/variables" as *;
 @use "./base/reset";
 @use "./components/navbar";
+@use "./components/auth";
 @use "./components/statsCard";
 @use "./components/vehicleCard";
 @use "./components/repairStatus";
@@ -8,6 +9,7 @@
 @use "./components/actionCards";
 @use "./components/workshopCard";
 @use "./components/workshopPanel";
+@use "./components/globalFooter";
 @use "./pages/garage";
 @use "./pages/vehicleDetailPage";
 @use "./pages/workshops";

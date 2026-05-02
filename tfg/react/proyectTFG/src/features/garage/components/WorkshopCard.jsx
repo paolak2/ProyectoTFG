@@ -37,7 +37,7 @@ function WorkshopRatingStars({ rating, maxStars = 5 }) {
   );
 }
 
-function WorkshopCard({ workshop }) {
+function WorkshopCard({ workshop, onContactar }) {
   return (
     <article className="workshopCard">
       <header>
@@ -78,7 +78,9 @@ function WorkshopCard({ workshop }) {
         ))}
       </div>
       <div className="workshop-footer">
-        <button type="button">Contactar Taller</button>
+        <button type="button" onClick={() => onContactar?.(workshop)}>
+          Contactar Taller
+        </button>
       </div>
     </article>
   );

@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_TALLER_CHAT_URL } from "../../../constantes/constantes";
-
-async function fetchChat() {
-  const response = await fetch(API_TALLER_CHAT_URL);
-  if (!response.ok) {
-    throw new Error("No se pudo cargar el chat del taller");
-  }
-  return response.json();
-}
+import useWorkshopAuth from "../context/useWorkshopAuth";
 
 function TallerChatPage() {
+  const { authFetch } = useWorkshopAuth();
   const { data = [], isPending, isError, error } = useQuery({
     queryKey: ["taller-chat"],
-    queryFn: fetchChat,
+    queryFn: async () => {
+      const response = await authFetch(API_TALLER_CHAT_URL);
+      if (!response.ok) {
+        throw new Error("No se pudo cargar el chat del taller");
+      }
+      return response.json();
+    },
   });
 
   return (

@@ -5,18 +5,10 @@ import {
   API_VEHICLE_URL,
   API_SERVICES_URL,
 } from "../../../constantes/constantes";
-
-async function fetchServicios() {
-  const res = await fetch(API_SERVICES_URL);
-
-  if (!res.ok) {
-    throw new Error("Error al obtener servicios");
-  }
-
-  return res.json();
-}
+import { useAuth } from "../../auth/AuthContext";
 
 function AddModal({ onClose, userId, vehicleId, type }) {
+  const { authFetch } = useAuth();
   const queryClient = useQueryClient();
 
   const [errors, setErrors] = useState({});
@@ -46,7 +38,13 @@ function AddModal({ onClose, userId, vehicleId, type }) {
     error: serviciosError,
   } = useQuery({
     queryKey: ["servicios"],
-    queryFn: fetchServicios,
+    queryFn: async () => {
+      const res = await authFetch(API_SERVICES_URL);
+      if (!res.ok) {
+        throw new Error("Error al obtener servicios");
+      }
+      return res.json();
+    },
     enabled: type === "factura",
   });
 
@@ -135,8 +133,6 @@ function AddModal({ onClose, userId, vehicleId, type }) {
   const buildPayload = () => {
     if (type === "factura") {
       return {
-        userId,
-        vehicleId,
         serviceId: formData.descripcion?.value,
         name: formData.descripcion?.label,
         total: Number(formData.precio),
@@ -145,8 +141,6 @@ function AddModal({ onClose, userId, vehicleId, type }) {
     }
 
     return {
-      userId,
-      vehicleId,
       litros: formData.litros ? Number(formData.litros) : null,
       monto: Number(formData.monto),
       date: formData.date || new Date().toISOString().split("T")[0],
@@ -159,7 +153,7 @@ function AddModal({ onClose, userId, vehicleId, type }) {
         ? `${API_VEHICLE_URL}/${userId}/${vehicleId}/facturas`
         : `${API_VEHICLE_URL}/${userId}/${vehicleId}/gasoil`;
 
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -188,7 +182,7 @@ function AddModal({ onClose, userId, vehicleId, type }) {
         queryKey: ["vehicle", userId, vehicleId],
       });
       await queryClient.refetchQueries({
-        queryKey: ["vehicles"],
+        queryKey: ["vehicles", userId],
       });
       onClose();
     },
@@ -368,7 +362,11 @@ function AddModal({ onClose, userId, vehicleId, type }) {
             </div>
           )}
 
-          <button type="submit" disabled={mutation.isPending}>
+          <button
+            type="submit"
+            className="modal-form-btn modal-form-btn--primary"
+            disabled={mutation.isPending}
+          >
             {mutation.isPending ? "Guardando..." : "Guardar"}
           </button>
         </form>

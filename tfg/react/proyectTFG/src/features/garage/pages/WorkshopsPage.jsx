@@ -1,42 +1,24 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/navBar";
 import WorkshopCard from "../components/WorkshopCard";
+import CitaSolicitudModal from "../components/CitaSolicitudModal";
 import {
   API_SERVICES_URL,
+  API_VEHICLES_URL,
   API_WORKSHOPS_URL,
 } from "../../../constantes/constantes";
+import { useAuth } from "../../auth/AuthContext";
 
 const SEARCH_DEBOUNCE_MS = 3000;
 
-async function fetchServices() {
-  const response = await fetch(API_SERVICES_URL);
-  if (!response.ok) {
-    throw new Error("No se pudieron cargar los servicios");
-  }
-  return response.json();
-}
-
-async function fetchWorkshops({ queryKey }) {
-  const [, search, service] = queryKey;
-  const params = new URLSearchParams();
-  if (search) params.set("q", search);
-  if (service) params.set("service", service);
-  const queryString = params.toString();
-  const url = queryString
-    ? `${API_WORKSHOPS_URL}?${queryString}`
-    : API_WORKSHOPS_URL;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("No se pudieron cargar los talleres");
-  }
-  return response.json();
-}
-
 function WorkshopsPage() {
+  const queryClient = useQueryClient();
+  const { user, authFetch } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [citaWorkshop, setCitaWorkshop] = useState(null);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -56,8 +38,35 @@ function WorkshopsPage() {
     error: servicesError,
   } = useQuery({
     queryKey: ["services"],
-    queryFn: fetchServices,
+    queryFn: async () => {
+      const response = await authFetch(API_SERVICES_URL);
+      if (!response.ok) {
+        throw new Error("No se pudieron cargar los servicios");
+      }
+      return response.json();
+    },
+    enabled: Boolean(user?.id),
   });
+
+  const { data: vehiclesUsuario = [] } = useQuery({
+    queryKey: ["vehicles", user?.id],
+    queryFn: async () => {
+      const res = await authFetch(API_VEHICLES_URL);
+      if (!res.ok) {
+        throw new Error("Error al obtener vehículos");
+      }
+      return res.json();
+    },
+    enabled: Boolean(user?.id),
+  });
+
+  const vehiclesDisponiblesCita = useMemo(
+    () =>
+      vehiclesUsuario.filter(
+        (v) => v.status === "Disponible" && !v.solicitudCita,
+      ),
+    [vehiclesUsuario],
+  );
 
   const hasActiveSearch =
     searchTerm.trim().length > 0 || selectedService.length > 0;
@@ -76,8 +85,25 @@ function WorkshopsPage() {
       debouncedSearchTerm.trim(),
       selectedService,
     ],
-    queryFn: fetchWorkshops,
-    enabled: hasActiveSearch && isTextSearchSettled,
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (debouncedSearchTerm.trim()) {
+        params.set("q", debouncedSearchTerm.trim());
+      }
+      if (selectedService) {
+        params.set("service", selectedService);
+      }
+      const queryString = params.toString();
+      const url = queryString
+        ? `${API_WORKSHOPS_URL}?${queryString}`
+        : API_WORKSHOPS_URL;
+      const response = await authFetch(url);
+      if (!response.ok) {
+        throw new Error("No se pudieron cargar los talleres");
+      }
+      return response.json();
+    },
+    enabled: Boolean(user?.id) && hasActiveSearch && isTextSearchSettled,
     placeholderData: (previousData) => previousData,
   });
 
@@ -148,11 +174,7 @@ function WorkshopsPage() {
 
           {hasActiveSearch &&
             !isTextSearchSettled &&
-            searchTerm.trim().length > 0 && (
-              <p>
-                Cargando talleres...
-              </p>
-            )}
+            searchTerm.trim().length > 0 && <p>Cargando talleres...</p>}
 
           {hasActiveSearch &&
             isTextSearchSettled &&
@@ -173,12 +195,29 @@ function WorkshopsPage() {
                 )}
 
                 {workshops.map((workshop) => (
-                  <WorkshopCard key={workshop.id} workshop={workshop} />
+                  <WorkshopCard
+                    key={workshop.id}
+                    workshop={workshop}
+                    onContactar={setCitaWorkshop}
+                  />
                 ))}
               </div>
             )}
         </div>
       </div>
+      {citaWorkshop && (
+        <CitaSolicitudModal
+          mode="workshop"
+          fixedWorkshop={citaWorkshop}
+          vehiclesDisponibles={vehiclesDisponiblesCita}
+          onClose={() => setCitaWorkshop(null)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: ["vehicles", user.id],
+            });
+          }}
+        />
+      )}
     </>
   );
 }

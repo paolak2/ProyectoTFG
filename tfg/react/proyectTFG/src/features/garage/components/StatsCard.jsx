@@ -50,6 +50,30 @@ const PRESET_CONFIG = {
     variant: "success",
     class: "disponible",
   },
+  facturacionEmitidas: {
+    title: "Facturas emitidas (mes)",
+    icon: "bi bi-receipt-cutoff",
+    variant: "primary",
+    class: "total",
+  },
+  facturacionImporte: {
+    title: "Importe total (con IVA)",
+    icon: "bi bi-currency-euro",
+    variant: "neutral",
+    class: "total",
+  },
+  facturacionPagadas: {
+    title: "Facturas pagadas",
+    icon: "bi bi-check2-circle",
+    variant: "success",
+    class: "disponible",
+  },
+  facturacionPorPagar: {
+    title: "Por pagar (importe con IVA)",
+    icon: "bi bi-hourglass-split",
+    variant: "warning",
+    class: "taller",
+  },
 };
 
 function StatsCard({ type, title, value, icon, variant, className = "" }) {

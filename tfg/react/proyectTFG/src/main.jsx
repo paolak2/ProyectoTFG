@@ -4,15 +4,18 @@ import "./compartidos/components/styles/main.scss";
 import App from "./App.jsx";
 import { StrictMode } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./features/auth/AuthContext";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 );

@@ -95,6 +95,51 @@ article {
       color: changeColor($warning, -50%);
       border: 1px solid changeColor($warning, -50%);
     }
+    &-cita-programada {
+      background-color: changeColor($primary-color, 85%);
+      color: $primary-color-oscuro;
+      border: 1px solid $primary-color;
+    }
+  }
+
+  .cita-rechazo-msg {
+    margin-top: $padding_sm;
+    padding: $padding_sm;
+    border-radius: $border-radius;
+    background-color: changeColor($error, 75%);
+    color: changeColor($error, -30%);
+    font-size: 0.9rem;
+  }
+
+  .cita-banner {
+    margin-top: $padding_sm;
+    padding: $padding_sm;
+    border-radius: $border-radius;
+    font-size: 0.9rem;
+
+    &--info {
+      background-color: changeColor($warning, 40%);
+      color: changeColor($warning, -55%);
+    }
+    &--ok {
+      background-color: changeColor($success, 30%);
+      color: changeColor($text-color, -10%);
+    }
+  }
+
+  .cita-programada-resumen {
+    margin-top: $padding_sm;
+    padding: $padding_sm;
+    border-radius: $border-radius;
+    background-color: changeColor($primary-color, 88%);
+    color: $text-color;
+
+    p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $padding_sm;
+    }
   }
   .vehicle-footer {
     margin-top: $padding_md;

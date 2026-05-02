@@ -2,12 +2,14 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { API_VEHICLE_URL } from "../../../constantes/constantes";
+import { useAuth } from "../../auth/AuthContext";
 import Navbar from "../components/navBar";
 import StatsCard from "../components/StatsCard";
 import AddModal from "../components/AddModal";
 import ActionCards from "../components/ActionCards";
 
 function VehicleDetailPage() {
+  const { authFetch } = useAuth();
   const { id: vehicleId, userId } = useParams();
   const [modalType, setModalType] = useState(null);
 
@@ -23,7 +25,9 @@ function VehicleDetailPage() {
   } = useQuery({
     queryKey: ["vehicle", userId, vehicleId],
     queryFn: async () => {
-      const res = await fetch(`${API_VEHICLE_URL}/${userId}/${vehicleId}`);
+      const res = await authFetch(
+        `${API_VEHICLE_URL}/${userId}/${vehicleId}`,
+      );
       if (!res.ok) {
         throw new Error("Error al obtener el vehículo");
       }
@@ -152,11 +156,24 @@ function VehicleDetailPage() {
                     {vehicle.status === "Pendiente Recogida" && (
                       <i className="bi bi-clock"></i>
                     )}
+                    {vehicle.status === "Cita programada" && (
+                      <i className="bi bi-calendar-event"></i>
+                    )}
                     Estado
                   </p>
                   <p>{vehicle.status}</p>
                 </div>
               </div>
+              {vehicle.status === "Cita programada" &&
+                vehicle.citaFechaEntrada && (
+                  <div className="info-vehicle cita-programada-resumen">
+                    <p>
+                      <i className="bi bi-calendar-check"></i> Entrada prevista
+                      al taller
+                    </p>
+                    <p>{vehicle.citaFechaEntrada}</p>
+                  </div>
+                )}
               {vehicle.taller != null && (
                 <div className="service">
                   <div className="info">

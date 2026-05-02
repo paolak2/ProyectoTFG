@@ -1,0 +1,43 @@
+@use "../base/variables" as *;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  background-color: $secondary-color-gris;
+}
+
+.global-footer {
+  background-color: $primary-color-oscuro;
+  color: $text-color-white;
+  padding: 1.25rem 1rem;
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  &__brand {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  &__copyright,
+  &__institute,
+  &__tech {
+    font-size: 0.95rem;
+  }
+}

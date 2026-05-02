@@ -1,25 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_TALLER_ORDENES_URL } from "../../../constantes/constantes";
+import useWorkshopAuth from "../context/useWorkshopAuth";
 
 const REPAIR_OPTIONS = [
   { value: "en_espera", label: "En espera" },
   { value: "en_curso", label: "En curso" },
   { value: "finalizada", label: "Finalizada" },
 ];
-
-async function patchOrden(vehicleId, body) {
-  const res = await fetch(`${API_TALLER_ORDENES_URL}${vehicleId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "No se pudo actualizar la orden");
-  }
-  return res.json();
-}
 
 function EditWorkshopOrderModal({
   vehicle,
@@ -28,6 +16,7 @@ function EditWorkshopOrderModal({
   sessionStaffId,
   onClose,
 }) {
+  const { authFetch } = useWorkshopAuth();
   const queryClient = useQueryClient();
   const [repairStatus, setRepairStatus] = useState(
     vehicle.taller.repairStatus,
@@ -55,7 +44,18 @@ function EditWorkshopOrderModal({
   }, [vehicle, sessionStaffId, staff]);
 
   const mutation = useMutation({
-    mutationFn: (body) => patchOrden(vehicle.id, body),
+    mutationFn: async (body) => {
+      const res = await authFetch(`${API_TALLER_ORDENES_URL}${vehicle.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudo actualizar la orden");
+      }
+      return res.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["taller-panel"] });
       onClose();

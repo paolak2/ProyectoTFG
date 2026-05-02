@@ -5,6 +5,12 @@
   width: clamp(280px, 92%, 440px);
 }
 
+.manual-cita-modal {
+  width: clamp(300px, 94%, 520px);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
 .workshop-modal-hint {
   color: $text-color-gray;
   font-size: clamp(11px, 0.9rem, 14px);
@@ -31,10 +37,14 @@
     color: $text-color-gray;
     margin-bottom: $padding_md;
 
-    select {
+    select,
+    textarea,
+    input[type="date"],
+    input[type="text"] {
       padding: $padding_base;
       border-radius: $border-radius;
       border: 1px solid $text-color-gray;
+      font-family: inherit;
     }
   }
 }
@@ -88,5 +98,330 @@ article.workshop-vehicle-card .vehicle-footer button:disabled {
 
   &:hover {
     background-color: $primary-color;
+  }
+}
+
+.taller-citas {
+  margin-top: $padding_lg;
+}
+
+.taller-citas__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $gap_md;
+  flex-wrap: wrap;
+}
+
+.taller-citas__manual-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.taller-citas__section {
+  margin-bottom: $gap_lg;
+
+  h2 {
+    font-size: 1.1rem;
+    color: $text-color;
+    margin-bottom: $padding_md;
+  }
+}
+
+.taller-citas__empty {
+  color: $text-color-gray;
+  font-size: 0.95rem;
+}
+
+.taller-citas__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $padding_md;
+}
+
+.taller-cita-card {
+  background: $secondary-color-claro;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: $padding_md;
+  display: flex;
+  flex-direction: column;
+  gap: $padding_sm;
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: $padding_base;
+    strong {
+      color: $text-color;
+    }
+    span {
+      font-size: 0.9rem;
+      color: $text-color-gray;
+    }
+  }
+
+  &--nueva {
+    border-left: 4px solid $primary-color;
+  }
+
+  &--proxima {
+    border-left: 4px solid changeColor($warning, -20%);
+  }
+}
+
+.taller-cita-card__meta {
+  font-size: 0.85rem;
+  color: $text-color-gray;
+  line-height: 1.4;
+}
+
+.taller-cita-card__comment {
+  font-size: 0.85rem;
+  color: $text-color;
+  font-style: italic;
+}
+
+.taller-cita-card__estado {
+  font-size: 0.9rem;
+  color: $text-color;
+}
+
+.taller-cita-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $padding_sm;
+  margin-top: auto;
+}
+
+.taller-cita-btn {
+  padding: $padding_sm $padding_md;
+  border-radius: $border-radius;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &--ok {
+    background: $primary-color;
+    color: $text-color-white;
+  }
+
+  &--no {
+    background: transparent;
+    color: $error;
+    border: 1px solid $error;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.taller-facturacion__header {
+  flex-wrap: wrap;
+  gap: $gap_md;
+}
+
+.taller-facturacion__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $padding_md;
+  align-items: flex-end;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: $padding_base;
+    font-size: 0.85rem;
+    color: $text-color-gray;
+
+    select {
+      padding: $padding_sm;
+      border-radius: $border-radius;
+      border: 1px solid $text-color-gray;
+      min-width: 8rem;
+    }
+  }
+}
+
+.taller-facturacion__gen-btn {
+  align-self: flex-end;
+}
+
+.taller-facturacion__stats {
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (min-width: 960px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.taller-facturacion__list {
+  margin-top: $padding_lg;
+
+  h2 {
+    font-size: 1.1rem;
+    color: $text-color;
+    margin-bottom: $padding_md;
+  }
+}
+
+.taller-facturacion__table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $padding_sm;
+}
+
+.taller-facturacion__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: $padding_md;
+  align-items: center;
+  background: $secondary-color-claro;
+  border-radius: $border-radius;
+  padding: $padding_md;
+  box-shadow: $shadow;
+}
+
+.taller-facturacion__meta {
+  display: block;
+  font-size: 0.85rem;
+  color: $text-color-gray;
+  margin-top: $padding_base;
+}
+
+.taller-facturacion__amounts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $padding_sm;
+  font-weight: 600;
+}
+
+.taller-facturacion__badge {
+  font-size: 0.8rem;
+  padding: $padding_base $padding_sm;
+  border-radius: $border-radius;
+
+  &--paid {
+    background: $success;
+    color: $text-color;
+  }
+
+  &--pending {
+    background: $warning;
+    color: $text-color;
+  }
+}
+
+.taller-facturacion__empty {
+  color: $text-color-gray;
+  margin-top: $padding_md;
+}
+
+.facturacion-modal {
+  width: clamp(300px, 94%, 560px);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.facturacion-lines__title {
+  font-size: 1rem;
+  color: $text-color;
+  margin: $padding_md 0 $padding_sm;
+}
+
+.facturacion-line {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: $padding_sm;
+  align-items: end;
+  margin-bottom: $padding_sm;
+  padding: $padding_sm;
+  background: changeColor($text-color-gray, 85%);
+  border-radius: $border-radius;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: $text-color;
+    text-transform: capitalize;
+  }
+
+  &__remove {
+    padding: $padding_base $padding_sm;
+    border: 1px solid $error;
+    color: $error;
+    background: transparent;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  label {
+    font-size: 0.75rem;
+
+    input {
+      width: 100%;
+      max-width: 6rem;
+    }
+  }
+}
+
+.facturacion-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $padding_sm;
+  align-items: flex-end;
+  margin-top: $padding_sm;
+
+  &--extra {
+    margin-top: $padding_md;
+    padding-top: $padding_md;
+    border-top: $border-bottom-line;
+  }
+
+  button {
+    padding: $padding_sm $padding_md;
+    border-radius: $border-radius;
+    border: 1px solid $primary-color;
+    background: changeColor($primary-color, 88%);
+    color: $primary-color;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: $padding_base;
+    font-size: 0.85rem;
+
+    input,
+    select {
+      padding: $padding_sm;
+      border-radius: $border-radius;
+      border: 1px solid $text-color-gray;
+    }
+  }
+}
+
+.facturacion-totals {
+  margin-top: $padding_md;
+  padding: $padding_md;
+  background: changeColor($primary-color, 88%);
+  border-radius: $border-radius;
+
+  p {
+    margin: $padding_base 0;
+    color: $text-color;
   }
 }

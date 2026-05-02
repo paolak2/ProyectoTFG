@@ -6,8 +6,9 @@ import {
   API_VEHICLES_URL,
   API_VEHICLE_URL,
 } from "../../../constantes/constantes";
+import { useAuth } from "../../auth/AuthContext";
 import { colores } from "../../../constantes/colores";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 async function fetchMarcas() {
@@ -27,6 +28,7 @@ async function fetchAseguradoras() {
 }
 
 function ModalForm({ onClose, userId, vehicleToEdit = null }) {
+  const { authFetch } = useAuth();
   const queryClient = useQueryClient();
   const currentYear = new Date().getFullYear();
   const isEditMode = Boolean(vehicleToEdit);
@@ -35,51 +37,57 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
   const handleBlur = (name) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
   };
-  const initialFormData = useMemo(
-    () => ({
-      matricula: vehicleToEdit?.plate || "",
-      marca: vehicleToEdit
-        ? {
-            value: vehicleToEdit.brandId,
-            label: vehicleToEdit.brandName,
-          }
-        : null,
-      modelo: vehicleToEdit
-        ? {
-            value: vehicleToEdit.modelId,
-            label: vehicleToEdit.modelName,
-          }
-        : null,
-      color: vehicleToEdit
-        ? {
-            value: vehicleToEdit.color,
-            label: vehicleToEdit.color,
-            color: vehicleToEdit.color,
-          }
-        : null,
-      year: vehicleToEdit
-        ? {
-            value: vehicleToEdit.year,
-            label: vehicleToEdit.year,
-          }
-        : null,
-      kms:
-        vehicleToEdit?.mileage !== undefined && vehicleToEdit?.mileage !== null
-          ? String(vehicleToEdit.mileage)
-          : "",
-      aseguradora:
-        vehicleToEdit?.insuranceId && vehicleToEdit?.insuranceName
-          ? {
-              value: vehicleToEdit.insuranceId,
-              label: vehicleToEdit.insuranceName,
-            }
-          : null,
-      numPoliza: vehicleToEdit?.insuranceNumber || "",
-      imagen: null,
-    }),
-    [vehicleToEdit],
+  const yearOptions = useMemo(
+    () =>
+      Array.from({ length: currentYear - 1990 + 1 }, (_, i) => {
+        const y = 1990 + i;
+        return { value: y, label: String(y) };
+      }),
+    [currentYear],
   );
+
+  const initialFormData = useMemo(() => {
+    const v = vehicleToEdit;
+    const hasYear = v && v.year != null && v.year !== "";
+    const hasMarca = v && v.brandId != null && v.brandName != null;
+    const hasModelo = v && v.modelId != null && v.modelName != null;
+    const hasColor = v && v.color != null && v.color !== "";
+    const hasAseg = Boolean(v?.insuranceId && v?.insuranceName);
+    const selectedColor = hasColor
+      ? colores.find((c) => c.value === v.color) ?? null
+      : null;
+    const selectedYear = hasYear
+      ? yearOptions.find((y) => y.value === Number(v.year)) ?? null
+      : null;
+
+    return {
+      matricula: v?.plate ?? "",
+      marca: hasMarca
+        ? { value: v.brandId, label: String(v.brandName) }
+        : null,
+      modelo: hasModelo
+        ? { value: v.modelId, label: String(v.modelName) }
+        : null,
+      color: selectedColor,
+      year: selectedYear,
+      kms:
+        v?.mileage !== undefined && v?.mileage !== null
+          ? String(v.mileage)
+          : "",
+      aseguradora: hasAseg
+        ? {
+            value: v.insuranceId,
+            label: String(v.insuranceName),
+          }
+        : null,
+      numPoliza: v?.insuranceNumber ?? "",
+      imagen: null,
+    };
+  }, [vehicleToEdit, yearOptions]);
   const [formData, setFormData] = useState(initialFormData);
+  useEffect(() => {
+    setFormData(initialFormData);
+  }, [initialFormData]);
 
   const validacion = (name, value) => {
     switch (name) {
@@ -259,7 +267,6 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
 
   const buildDatos = () => {
     return {
-      userId: userId,
       plate: formData.matricula,
       brandId: formData.marca?.value,
       modelId: formData.modelo?.value,
@@ -276,7 +283,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
         ? `${API_VEHICLE_URL}/${userId}/${vehicleToEdit.id}`
         : API_VEHICLES_URL;
 
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: isEditMode ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
@@ -299,7 +306,9 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
   const mutation = useMutation({
     mutationFn: upsertVehicle,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      queryClient.invalidateQueries({
+        queryKey: ["vehicles", userId],
+      });
       if (isEditMode && vehicleToEdit) {
         queryClient.invalidateQueries({
           queryKey: ["vehicle", String(userId), String(vehicleToEdit.id)],
@@ -311,6 +320,41 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
       console.log("Errores backend:", error);
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const res = await authFetch(
+        `${API_VEHICLE_URL}/${userId}/${vehicleToEdit.id}`,
+        { method: "DELETE" },
+      );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || "No se pudo eliminar el vehículo");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["vehicles", userId],
+      });
+      queryClient.removeQueries({
+        queryKey: ["vehicle", String(userId), String(vehicleToEdit.id)],
+      });
+      onClose();
+    },
+  });
+
+  function handleDeleteClick() {
+    if (
+      !isEditMode ||
+      !vehicleToEdit ||
+      !window.confirm(
+        "¿Eliminar este vehículo? Esta acción no se puede deshacer.",
+      )
+    ) {
+      return;
+    }
+    deleteMutation.mutate();
+  }
   return (
     <div className="modal-overlay">
       <div className="modal-new-vehicle">
@@ -343,7 +387,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 maxMenuHeight={150}
                 placeholder="Selecciona una marca"
                 options={marcasOptions}
-                value={formData.marca}
+                value={formData.marca ?? null}
                 onChange={(option) => handleChange("marca", option)}
                 classNamePrefix="select"
                 className={touched.marca && errors.marca ? "select-error" : ""}
@@ -362,7 +406,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 isClearable={true}
                 maxMenuHeight={150}
                 placeholder="Selecciona un modelo"
-                value={formData.modelo}
+                value={formData.modelo ?? null}
                 isDisabled={!formData.marca}
                 onChange={(option) => handleChange("modelo", option)}
                 classNamePrefix="select"
@@ -379,7 +423,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
               <input
                 onBlur={() => handleBlur("matricula")}
                 type="text"
-                value={formData.matricula}
+                value={formData.matricula ?? ""}
                 onChange={(e) =>
                   handleChange("matricula", e.target.value.toUpperCase())
                 }
@@ -398,16 +442,12 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
               <Select
                 name="year"
                 onBlur={() => handleBlur("year")}
-                options={Array.from(
-                  { length: currentYear - 1990 + 1 },
-                  (_, i) => ({ value: 1990 + i, label: 1990 + i }),
-                )}
+                options={yearOptions}
                 isSearchable={true}
                 isClearable={true}
                 maxMenuHeight={150}
-                value={formData.year}
-                min={1990}
-                max={currentYear}
+                placeholder="Selecciona un año"
+                value={formData.year ?? null}
                 onChange={(option) => handleChange("year", option)}
                 classNamePrefix="select"
                 className={touched.year && errors.year ? "select-error" : ""}
@@ -428,7 +468,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 isSearchable={true}
                 isClearable={true}
                 maxMenuHeight={150}
-                value={formData.color}
+                value={formData.color ?? null}
                 onChange={(option) => handleChange("color", option)}
                 classNamePrefix="select"
                 className={touched.color && errors.color ? "select-error" : ""}
@@ -443,7 +483,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 type="number"
                 name="kms"
                 onBlur={() => handleBlur("kms")}
-                value={formData.kms}
+                value={formData.kms ?? ""}
                 min={0}
                 onChange={(e) => handleChange("kms", e.target.value)}
                 className={touched.kms && errors.kms ? "input error" : "input"}
@@ -462,7 +502,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 isClearable={true}
                 maxMenuHeight={120}
                 placeholder="Selecciona una aseguradora"
-                value={formData.aseguradora}
+                value={formData.aseguradora ?? null}
                 onChange={(option) => handleChange("aseguradora", option)}
                 classNamePrefix="select"
                 className={
@@ -482,7 +522,7 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
                 pattern="[A-Za-z0-9]{0,20}"
                 name="numPoliza"
                 onBlur={() => handleBlur("numPoliza")}
-                value={formData.numPoliza}
+                value={formData.numPoliza ?? ""}
                 onChange={(e) => handleChange("numPoliza", e.target.value)}
                 className={
                   touched.numPoliza && errors.numPoliza
@@ -514,9 +554,33 @@ function ModalForm({ onClose, userId, vehicleToEdit = null }) {
               <span className="error-text">{errors.imagen}</span>
             )}
           </label>
-          <button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "Guardando..." : "Guardar"}
-          </button>
+          <div className="modal-form-actions">
+            {isEditMode && (
+              <button
+                type="button"
+                className="modal-form-btn modal-form-btn--danger"
+                disabled={
+                  mutation.isPending ||
+                  deleteMutation.isPending
+                }
+                onClick={handleDeleteClick}
+              >
+                {deleteMutation.isPending ? "Eliminando…" : "Eliminar"}
+              </button>
+            )}
+            <button
+              type="submit"
+              className="modal-form-btn modal-form-btn--primary"
+              disabled={mutation.isPending || deleteMutation.isPending}
+            >
+              {mutation.isPending ? "Guardando..." : "Guardar"}
+            </button>
+          </div>
+          {deleteMutation.isError && (
+            <p className="error-text modal-form-delete-error">
+              {deleteMutation.error?.message ?? "Error al eliminar"}
+            </p>
+          )}
         </form>
       </div>
     </div>

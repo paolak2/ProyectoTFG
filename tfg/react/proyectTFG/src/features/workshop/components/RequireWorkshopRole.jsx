@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
-import useWorkshopAuth from "../context/useWorkshopAuth";
+import { useAuth } from "../../auth/AuthContext";
 
 function RequireWorkshopRole({ allowedRole, children }) {
-  const { role, isLoading, error } = useWorkshopAuth();
+  const { user, isLoading, error } = useAuth();
+  const role = user?.role ?? null;
 
   if (isLoading) {
     return <p>Cargando sesion del taller...</p>;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Navbar from "../components/navBar";
 import StatsCard from "../components/StatsCard";
@@ -7,26 +7,30 @@ import VehicleCard from "../components/VehicleCard";
 import ModalForm from "../components/modalForm";
 import AddModal from "../components/AddModal";
 import { API_VEHICLES_URL } from "../../../constantes/constantes";
-
-async function fetchVehicles() {
-  const res = await fetch(API_VEHICLES_URL);
-  if (!res.ok) {
-    throw new Error("Error al obtener vehículos");
-  }
-  return res.json();
-}
+import CitaSolicitudModal from "../components/CitaSolicitudModal";
+import { useAuth } from "../../auth/AuthContext";
 
 function GaragePage() {
+  const queryClient = useQueryClient();
+  const { user, authFetch } = useAuth();
   const [mostrarModal, setMostrarModal] = useState(false);
   const [vehicleToEdit, setVehicleToEdit] = useState(null);
+  const [citaVehicle, setCitaVehicle] = useState(null);
   const {
     data: vehicles = [],
     isPending,
     isError,
     error,
   } = useQuery({
-    queryKey: ["vehicles"],
-    queryFn: fetchVehicles,
+    queryKey: ["vehicles", user?.id],
+    queryFn: async () => {
+      const res = await authFetch(API_VEHICLES_URL);
+      if (!res.ok) {
+        throw new Error("Error al obtener vehículos");
+      }
+      return res.json();
+    },
+    enabled: Boolean(user?.id),
   });
   const [modalType, setModalType] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -44,7 +48,11 @@ function GaragePage() {
     setModalType(null);
     setSelectedVehicle(null);
   };
-  console.log(vehicles);
+  const total = vehicles.length;
+  const disponibles = vehicles.filter((v) => v.status === "Disponible").length;
+  const enTaller = vehicles.filter(
+    (v) => v.status === "En Taller" || v.status === "Pendiente Recogida",
+  ).length;
 
   function abrirModal() {
     setVehicleToEdit(null);
@@ -79,16 +87,17 @@ function GaragePage() {
           </div>
           {mostrarModal && (
             <ModalForm
+              key={vehicleToEdit?.id ?? "nuevo"}
               onClose={cerrarModal}
-              userId={1}
+              userId={user.id}
               vehicleToEdit={vehicleToEdit}
             />
           )}
 
           <div className="garage__stats">
-            <StatsCard type="total" value={3} />
-            <StatsCard type="disponible" value={2} />
-            <StatsCard type="taller" value={1} />
+            <StatsCard type="total" value={total} />
+            <StatsCard type="disponible" value={disponibles} />
+            <StatsCard type="taller" value={enTaller} />
           </div>
 
           <div className="garage__vehicles">
@@ -101,6 +110,7 @@ function GaragePage() {
                 onClickFactura={() => openFacturaModal(vehicle)}
                 onClickGasolina={() => openGasolinaModal(vehicle)}
                 onClickEditar={() => abrirModalEditar(vehicle)}
+                onSolicitarCita={(v) => setCitaVehicle(v)}
               />
             ))}
           </div>
@@ -112,6 +122,20 @@ function GaragePage() {
           userId={selectedVehicle.userId}
           vehicleId={selectedVehicle.id}
           onClose={closeModal}
+        />
+      )}
+      {citaVehicle && (
+        <CitaSolicitudModal
+          mode="garage"
+          fixedVehicle={citaVehicle}
+          fixedWorkshop={null}
+          vehiclesDisponibles={[]}
+          onClose={() => setCitaVehicle(null)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: ["vehicles", user.id],
+            });
+          }}
         />
       )}
     </>

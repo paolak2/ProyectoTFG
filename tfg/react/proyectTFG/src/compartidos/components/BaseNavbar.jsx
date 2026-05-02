@@ -1,6 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 
-function BaseNavbar({ links, subtitle = "Tu gestion propia de vehículos" }) {
+function BaseNavbar({
+  links,
+  subtitle = "Tu gestion propia de vehículos",
+  rightSlot = null,
+}) {
   const location = useLocation();
 
   return (
@@ -17,15 +21,22 @@ function BaseNavbar({ links, subtitle = "Tu gestion propia de vehículos" }) {
         </div>
         <nav>
           {links.map((link) => (
-            <Link
-              key={link.to}
-              className={location.pathname === link.to ? "selected" : ""}
-              to={link.to}
-            >
-              {link.label}
-            </Link>
+            link.disabled ? (
+              <span key={link.label} className="nav-link-disabled">
+                {link.label}
+              </span>
+            ) : (
+              <Link
+                key={link.to}
+                className={location.pathname === link.to ? "selected" : ""}
+                to={link.to}
+              >
+                {link.label}
+              </Link>
+            )
           ))}
         </nav>
+        {rightSlot}
       </header>
     </div>
   );

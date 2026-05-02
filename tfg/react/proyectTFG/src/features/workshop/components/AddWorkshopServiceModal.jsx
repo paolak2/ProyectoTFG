@@ -1,24 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_TALLER_ORDENES_URL } from "../../../constantes/constantes";
-
-async function postServicio(vehicleId, serviceId) {
-  const res = await fetch(
-    `${API_TALLER_ORDENES_URL}${vehicleId}/servicios`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ serviceId }),
-    },
-  );
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "No se pudo añadir el servicio");
-  }
-  return res.json();
-}
+import useWorkshopAuth from "../context/useWorkshopAuth";
 
 function AddWorkshopServiceModal({ vehicle, services, onClose }) {
+  const { authFetch } = useWorkshopAuth();
   const queryClient = useQueryClient();
   const usedIds = useMemo(() => {
     const ids = new Set();
@@ -49,7 +35,21 @@ function AddWorkshopServiceModal({ vehicle, services, onClose }) {
   }, [available]);
 
   const mutation = useMutation({
-    mutationFn: () => postServicio(vehicle.id, Number(serviceId)),
+    mutationFn: async () => {
+      const res = await authFetch(
+        `${API_TALLER_ORDENES_URL}${vehicle.id}/servicios`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ serviceId: Number(serviceId) }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudo añadir el servicio");
+      }
+      return res.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["taller-panel"] });
       onClose();

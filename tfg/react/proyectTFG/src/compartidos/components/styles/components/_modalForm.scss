@@ -101,17 +101,54 @@
     }
   }
 
-  button[type="submit"] {
-    background-color: $primary-color;
-    color: white;
-    padding: $padding_md $padding_lg;
-    border-radius: $border-radius;
-    border: none;
-    cursor: pointer;
+  .modal-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $padding_sm;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: $padding_sm;
+  }
 
-    &:hover {
-      background-color: changeColor($primary-color, 10%);
+  .modal-form-btn {
+    padding: $padding_sm $padding_md;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
+
+    &--primary {
+      background-color: $primary-color;
+      color: $text-color-white;
+      border: 1px solid $primary-color;
+
+      &:hover:not(:disabled) {
+        background-color: changeColor($primary-color, -12%);
+        border-color: changeColor($primary-color, -12%);
+        color: $text-color-white;
+      }
+    }
+
+    &--danger {
+      background-color: transparent;
+      color: $error;
+      border: 1px solid $error;
+      margin-right: auto;
+
+      &:hover:not(:disabled) {
+        background-color: color.scale($error, $alpha: -90%);
+      }
+    }
+  }
+
+  .modal-form-delete-error {
+    margin-top: $padding_sm;
+    text-align: right;
   }
 }
 

@@ -65,6 +65,64 @@
           background-color: $primary-color;
         }
       }
+
+      .nav-link-disabled {
+        background-color: $secondary-color-gris;
+        color: $text-color-gray;
+        padding: $padding_sm $padding_md;
+        border-radius: $border-radius;
+        font-size: 1rem;
+        cursor: not-allowed;
+        border: 1px solid color.scale($secondary-color-gris, $lightness: -12%);
+      }
+    }
+
+    .navbar__session {
+      display: flex;
+      align-items: center;
+      gap: $padding_md;
+      flex-shrink: 0;
+    }
+
+    .navbar__user-name {
+      font-size: 0.9rem;
+      color: $text-color;
+      max-width: 10rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .navbar__logout {
+      padding: $padding_sm $padding_md;
+      border-radius: $border-radius;
+      border: 1px solid $primary-color;
+      background: $primary-color;
+      color: $text-color-white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      &:hover {
+        background: changeColor($primary-color, -12%);
+        border-color: changeColor($primary-color, -12%);
+        color: $text-color-white;
+      }
+    }
+
+    .navbar__register-btn {
+      padding: $padding_sm $padding_md;
+      border-radius: $border-radius;
+      border: 1px solid $primary-color;
+      background: transparent;
+      color: $primary-color;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      &:hover {
+        background: color.scale($primary-color, $lightness: 92%);
+      }
     }
   }
 }
